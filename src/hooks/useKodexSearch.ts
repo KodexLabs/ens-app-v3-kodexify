@@ -1,5 +1,8 @@
-import { buildQueryParamString } from "@app/utils/buildQueryParamString"
+import { useQuery } from '@tanstack/react-query'
 
+import { buildQueryParamString } from '@app/utils/buildQueryParamString'
+
+/* eslint-disable @typescript-eslint/naming-convention */
 export type MarketplaceDomainType = {
   name: string
   name_ens: string
@@ -20,9 +23,10 @@ export type MarketplaceDomainType = {
 }
 
 const useKodexSearch = (searchTerm: string) => {
-  const = useQuery({
+  const { data } = useQuery({
     queryKey: ['kodexSearch', searchTerm],
     queryFn: async () => {
+      /* eslint-disable @typescript-eslint/naming-convention */
       const paramString = buildQueryParamString({
         limit: 3,
         offset: 0,
@@ -35,11 +39,10 @@ const useKodexSearch = (searchTerm: string) => {
         min_listing_price: '',
         search_terms: '',
         name_symbols_type: '',
-        // .filter((t) => t !== 'Emojis') // TODO - find why emojis not valid
         has_offers_selector: '',
         status_type: '',
       })
-    
+
       const res = await fetch(`https://jetty.kodex.io/search/plain?${paramString}`, {
         method: 'GET',
         mode: 'cors',
@@ -48,8 +51,14 @@ const useKodexSearch = (searchTerm: string) => {
           'Content-Type': 'application/json',
         },
       })
-    
 
-    }
+      const json: any = await res.json()
+
+      return json.domains as MarketplaceDomainType[]
+    },
   })
+
+  return data
 }
+
+export default useKodexSearch
