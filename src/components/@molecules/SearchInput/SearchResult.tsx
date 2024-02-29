@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
+import { ReactNode, forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -13,10 +13,16 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
 import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useChainId } from '@app/hooks/useChainId'
+import { useEthPrice } from '@app/hooks/useEthPrice'
+import { MarketplaceDomainItem } from '@app/hooks/useKodexSearch'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
+import { formatEtherPrice } from '@app/utils/formatEtherPrice'
+import { formatUsd } from '@app/utils/formatUsd'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
+
+import { AnyItem } from './types'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -147,6 +153,17 @@ const SpinnerWrapper = styled.div(
   `,
 )
 
+const DomainPriceWrapper = styled.div(
+  () => css`
+    width: full;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    flex-flow: row nowrap;
+    gap: 0.5rem;
+  `,
+)
+
 const AddressResultItem = ({ address }: { address: string }) => {
   const { t } = useTranslation('common')
   const primary = usePrimary(address)
@@ -206,6 +223,33 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
   }
 }
 
+const StyledStatusTag = ({
+  status,
+  children,
+}: {
+  status: RegistrationStatus
+  children: ReactNode
+}) => {
+  switch (status) {
+    case 'owned':
+    case 'imported':
+    case 'registered':
+      return <StyledTag>{children}</StyledTag>
+    case 'gracePeriod':
+      return <GracePeriodTag>{children}</GracePeriodTag>
+    case 'premium':
+      return <PremiumTag>{children}</PremiumTag>
+    case 'available':
+      return <StyledTag colorStyle="greenSecondary">{children}</StyledTag>
+    case 'notOwned':
+    case 'notImported':
+      return <StyledTag colorStyle="blueSecondary">{children}</StyledTag>
+    case 'short':
+    default:
+      return <StyledTag colorStyle="redSecondary">{children}</StyledTag>
+  }
+}
+
 const TextWrapper = styled.div(
   () => css`
     overflow: hidden;
@@ -244,39 +288,71 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
   )
 }
 
-const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
-  ({ name, ...props }, ref) => {
-    const network = useChainId()
-    const { avatar } = useAvatar(name, network)
-    const zorb = useZorb(name, 'name')
-    const { registrationStatus, isLoading, beautifiedName } = useBasicName(name)
+const NameResultItem = forwardRef<
+  HTMLDivElement,
+  { name: string; domain: AnyItem | MarketplaceDomainItem; $selected: boolean }
+>(({ name, domain, ...props }, ref) => {
+  const network = useChainId()
+  const { avatar } = useAvatar(name, network)
+  const zorb = useZorb(name, 'name')
+  const { data: ethPrice } = useEthPrice()
+  const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
 
-    return (
-      <SearchItem
-        data-testid="search-result-name"
-        {...props}
-        $clickable={registrationStatus !== 'short'}
-        ref={ref}
-      >
-        <LeadingSearchItem>
-          <AvatarWrapper>
-            <Avatar src={avatar || zorb} label="name" />
-          </AvatarWrapper>
-          <TextWrapper>
-            <Typography weight="bold">{beautifiedName}</Typography>
-          </TextWrapper>
-        </LeadingSearchItem>
-        {!isLoading && registrationStatus ? (
+  const listingPrice = (domain as MarketplaceDomainItem).listing_end_price
+
+  const displayPrice = registrationStatus
+    ? {
+        premium:
+          priceData && ethPrice && !priceData.premium.isZero()
+            ? formatUsd(priceData.premium, ethPrice)
+            : null,
+        available:
+          priceData && ethPrice && !priceData.base.isZero()
+            ? formatUsd(priceData.base, ethPrice)
+            : null,
+        gracePeriod: null,
+        registered: listingPrice ? formatEtherPrice(listingPrice, false, 3) : null,
+        imported: null,
+        notImported: null,
+        invalid: null,
+        notOwned: null,
+        owned: null,
+        short: null,
+        unsupportedTLD: null,
+      }[registrationStatus]
+    : null
+
+  return (
+    <SearchItem
+      data-testid="search-result-name"
+      {...props}
+      $clickable={registrationStatus !== 'short'}
+      ref={ref}
+    >
+      <LeadingSearchItem>
+        <AvatarWrapper>
+          <Avatar src={avatar || zorb} label="name" />
+        </AvatarWrapper>
+        <TextWrapper>
+          <Typography weight="bold">{beautifiedName}</Typography>
+        </TextWrapper>
+      </LeadingSearchItem>
+      {isLoading && (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
+      {registrationStatus ? (
+        <DomainPriceWrapper>
           <StatusTag status={registrationStatus} />
-        ) : (
-          <SpinnerWrapper>
-            <Spinner color="accent" />
-          </SpinnerWrapper>
-        )}
-      </SearchItem>
-    )
-  },
-)
+          {displayPrice ? (
+            <StyledStatusTag status={registrationStatus}>{displayPrice}</StyledStatusTag>
+          ) : null}
+        </DomainPriceWrapper>
+      ) : null}
+    </SearchItem>
+  )
+})
 
 type SearchItemType = 'text' | 'error' | 'address' | 'name' | 'nameWithDotEth'
 
@@ -288,6 +364,7 @@ export const SearchResult = ({
   index,
   selected,
   usingPlaceholder = true,
+  item,
 }: {
   type: SearchItemType
   value: string
@@ -296,6 +373,7 @@ export const SearchResult = ({
   index: number
   selected: number
   usingPlaceholder?: boolean
+  item: AnyItem | MarketplaceDomainItem
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
@@ -348,7 +426,7 @@ export const SearchResult = ({
   }
 
   if (type === 'name' || type === 'nameWithDotEth') {
-    return <NameResultItem name={input} {...props} />
+    return <NameResultItem name={input} domain={item} {...props} />
   }
 
   if (type === 'error') {

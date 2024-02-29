@@ -3,6 +3,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+
+/* eslint-disable @typescript-eslint/naming-convention */
 import { isAddress } from '@ethersproject/address'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -14,6 +16,10 @@ import { useQueryClient } from 'wagmi'
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { BatchReturn } from '@app/hooks/useBasicName'
+import useKodexSearch, {
+  MarketplaceDomainItem,
+  MarketplaceDomainType,
+} from '@app/hooks/useKodexSearch'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
@@ -211,6 +217,7 @@ export const SearchInput = ({
   const [usingPlaceholder, setUsingPlaceholder] = useState(false)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
+  const { fetchedDomains: kodexDomains, setSearchTerm: setKodexSearchTerm } = useKodexSearch()
 
   const isEmpty = inputVal === ''
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
@@ -277,7 +284,11 @@ export const SearchInput = ({
     return []
   }, [history, normalisedOutput, searchItem.type])
 
-  const searchItems: AnyItem[] = useMemo(() => {
+  useEffect(() => {
+    if (normalisedOutput) setKodexSearchTerm(normalisedOutput)
+  }, [normalisedOutput, setKodexSearchTerm])
+
+  const searchItems: (AnyItem | MarketplaceDomainItem)[] = useMemo(() => {
     const _searchItem = { ...searchItem, isHistory: false }
     const _extraItems = extraItems
     if (searchItem.type === 'error') {
@@ -289,25 +300,31 @@ export const SearchInput = ({
       }
       return [_searchItem]
     }
-    const _searchItems: AnyItem[] =
-      _searchItem.type === 'nameWithDotEth'
-        ? [_searchItem, { type: 'name', isHistory: false }]
-        : [_searchItem]
-    return [..._searchItems, ...extraItems].slice(0, 5)
-  }, [searchItem, extraItems])
+    const _searchItems: AnyItem[] = _searchItem.type === 'nameWithDotEth' ? [] : [_searchItem]
+    const kodexSearchItems =
+      kodexDomains?.map((domain: MarketplaceDomainType) => ({
+        type: 'nameWithDotEth' as 'nameWithDotEth',
+        isHistory: false,
+        value: domain.name_ens,
+        ...domain,
+      })) || []
+    return [..._searchItems, ...kodexSearchItems, ...extraItems].slice(0, 5)
+  }, [searchItem, extraItems, kodexDomains])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
-    let selectedItem = searchItems[selected] as SearchItem
+    let selectedItem = searchItems[selected] as SearchItem | MarketplaceDomainItem
+    const listingPrice = (selectedItem as MarketplaceDomainItem).listing_end_price
     if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
         value: `${normalisedOutput}.eth`,
+        listing_end_price: listingPrice ?? undefined,
       }
     }
     if (!selectedItem.value) {
@@ -331,6 +348,7 @@ export const SearchInput = ({
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
+      // Query domain on search (SINGLE domain)
       const queryKey = queryKeys.basicName(selectedItem.value, false)
       const currentQuery = queryClient.getQueryData<any[]>(queryKey)
       if (currentQuery) {
@@ -463,6 +481,7 @@ export const SearchInput = ({
           usingPlaceholder={item.isHistory ? false : usingPlaceholder}
           key={`${item.type}-${item.value}`}
           value={item.value || normalisedOutput}
+          item={item}
         />
       ))}
     </SearchResultsContainer>
