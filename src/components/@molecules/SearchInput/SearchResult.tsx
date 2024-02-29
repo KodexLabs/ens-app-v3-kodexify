@@ -298,7 +298,9 @@ const NameResultItem = forwardRef<
   const { data: ethPrice } = useEthPrice()
   const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
 
-  const listingPrice = (domain as MarketplaceDomainItem).listing_end_price
+  const listingPrice = (domain as MarketplaceDomainItem)
+    ? (domain as MarketplaceDomainItem).listing_end_price
+    : null
 
   const displayPrice = registrationStatus
     ? {
