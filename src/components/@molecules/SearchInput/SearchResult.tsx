@@ -24,6 +24,8 @@ import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
 import { AnyItem } from './types'
+import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
+import { getPremiumPrice } from '@app/utils/premium'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -298,8 +300,9 @@ const NameResultItem = forwardRef<
   const zorb = useZorb(name, 'name')
   const { data: ethPrice } = useEthPrice()
   const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
+  const expireTime = (domain as MarketplaceDomainItem).expire_time || 0
   const regStatus =
-    getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
+    getRegistrationStatus(expireTime) || 'invalid'
 
   const listingPrice = (domain as MarketplaceDomainItem)
     ? (domain as MarketplaceDomainItem).listing_end_price
@@ -310,11 +313,11 @@ const NameResultItem = forwardRef<
         premium:
           priceData && ethPrice && !priceData.premium.isZero()
             ? formatUsd(priceData.premium, ethPrice)
-            : null,
+            : '$' + getPremiumPrice(expireTime, new Date().getTime() / 1000),
         available:
           priceData && ethPrice && !priceData.base.isZero()
             ? formatUsd(priceData.base, ethPrice)
-            : null,
+            : '$' + calculateRegistrationPrice(name).usd,
         gracePeriod: null,
         registered: listingPrice ? formatEtherPrice(listingPrice, false, 3) : null,
         imported: null,
