@@ -231,7 +231,7 @@ const StyledStatusTag = ({
   children,
 }: {
   status: RegistrationStatus
-  children: ReactNode
+  children?: ReactNode
 }) => {
   switch (status) {
     case 'owned':
@@ -308,12 +308,12 @@ const NameResultItem = forwardRef<
     ? (domain as MarketplaceDomainItem).listing_end_price
     : null
 
-  const displayPrice = registrationStatus
+  const displayPrice = regStatus
     ? {
         premium:
           priceData && ethPrice && !priceData.premium.isZero()
             ? formatUsd(priceData.premium, ethPrice)
-            : '$' + getPremiumPrice(expireTime, new Date().getTime() / 1000),
+            : '$' + Math.ceil(getPremiumPrice(expireTime, new Date().getTime() / 1000)),
         available:
           priceData && ethPrice && !priceData.base.isZero()
             ? formatUsd(priceData.base, ethPrice)
@@ -327,7 +327,7 @@ const NameResultItem = forwardRef<
         owned: null,
         short: null,
         unsupportedTLD: null,
-      }[registrationStatus]
+      }[regStatus]
     : null
 
     console.log(name, expireTime, calculateRegistrationPrice(name).usd, getPremiumPrice(expireTime, new Date().getTime() / 1000));
