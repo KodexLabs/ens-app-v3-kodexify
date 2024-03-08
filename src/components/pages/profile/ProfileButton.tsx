@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { isAddress } from '@ethersproject/address'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'

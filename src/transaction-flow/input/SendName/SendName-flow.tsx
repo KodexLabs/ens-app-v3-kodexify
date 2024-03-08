@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'

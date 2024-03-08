@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import isEqual from 'lodash/isEqual'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'

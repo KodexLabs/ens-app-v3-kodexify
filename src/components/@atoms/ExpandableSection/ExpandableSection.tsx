@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { PropsWithChildren, useRef, useState } from 'react'
 import { TransitionState, useTransition } from 'react-transition-state'
 import styled, { css } from 'styled-components'

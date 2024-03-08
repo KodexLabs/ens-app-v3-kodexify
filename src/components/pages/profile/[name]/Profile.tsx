@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'

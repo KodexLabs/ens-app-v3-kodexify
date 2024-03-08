@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { TOptions } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'

@@ -3,6 +3,7 @@ export const buildQueryParamString = (params: Record<string, any>) => {
 
   Object.entries(params).map(([key, value]) => {
     formattedParams[key] = String(value)
+    return value
   })
 
   const urlParamsObject = new URLSearchParams(formattedParams)

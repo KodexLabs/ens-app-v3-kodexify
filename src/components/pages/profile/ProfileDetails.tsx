@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -174,7 +175,6 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         content={action.tooltipContent}
         buttonText={action.label}
         mobileWidth={150}
-        mobileButtonWidth="initial"
         mobilePlacement="top"
         placement={action.tooltipPlacement || 'right'}
       />

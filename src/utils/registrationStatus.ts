@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { ParsedInputResult } from '@ensdomains/ensjs/utils/validation'

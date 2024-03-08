@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BigNumber } from '@ethersproject/bignumber'
 import { hexValue } from '@ethersproject/bytes'
 import type { FallbackProvider, JsonRpcProvider, JsonRpcSigner } from '@ethersproject/providers'
