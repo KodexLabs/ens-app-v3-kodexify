@@ -4,7 +4,7 @@ import { useQueryClient } from 'wagmi'
 
 import { SearchItem } from '@app/components/@molecules/SearchInput/types'
 import { buildQueryParamString } from '@app/utils/buildQueryParamString'
-import { calculateRegistrationPrice } from '@app/utils/getRegistrationStatus'
+import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
 
 import { useEthPrice } from './useEthPrice'
 

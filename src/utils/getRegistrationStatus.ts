@@ -1,9 +1,17 @@
-export const calculateRegistrationPrice = (name: string) => {
-  const usdPrice = { 7: 640, 8: 160 }[name.length] ?? 5
-  const ethPrice = usdPrice / 1800
+const DAY_IN_SECONDS = 86400
 
-  return {
-    usd: usdPrice,
-    eth: ethPrice,
-  }
+export const getRegistrationStatus = (expireTime: number | null) => {
+  if (!expireTime) return
+
+  const now = new Date().getTime() / 1000
+  const timeSinceExpiry = now - expireTime
+
+  if (timeSinceExpiry < 0) return 'registered'
+
+  if (timeSinceExpiry < DAY_IN_SECONDS * 90) return 'gracePeriod'
+
+  if (timeSinceExpiry >= DAY_IN_SECONDS * 90 && timeSinceExpiry < DAY_IN_SECONDS * 111)
+    return 'premium'
+
+  if (timeSinceExpiry > DAY_IN_SECONDS * 111) return 'unregistered'
 }

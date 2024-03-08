@@ -19,6 +19,7 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { formatEtherPrice } from '@app/utils/formatEtherPrice'
 import { formatUsd } from '@app/utils/formatUsd'
+import { getRegistrationStatus } from '@app/utils/getRegistrationStatus'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -297,6 +298,8 @@ const NameResultItem = forwardRef<
   const zorb = useZorb(name, 'name')
   const { data: ethPrice } = useEthPrice()
   const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
+  const regStatus =
+    getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
 
   const listingPrice = (domain as MarketplaceDomainItem)
     ? (domain as MarketplaceDomainItem).listing_end_price
@@ -346,9 +349,11 @@ const NameResultItem = forwardRef<
       )}
       {registrationStatus ? (
         <DomainPriceWrapper>
-          <StatusTag status={registrationStatus} />
+          <StatusTag status={regStatus as RegistrationStatus} />
           {displayPrice ? (
-            <StyledStatusTag status={registrationStatus}>{displayPrice}</StyledStatusTag>
+            <StyledStatusTag status={regStatus as RegistrationStatus}>
+              {displayPrice}
+            </StyledStatusTag>
           ) : null}
         </DomainPriceWrapper>
       ) : null}
