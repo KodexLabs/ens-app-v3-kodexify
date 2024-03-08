@@ -26,6 +26,7 @@ import { shortenAddress } from '@app/utils/utils'
 import { AnyItem } from './types'
 import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
 import { getPremiumPrice } from '@app/utils/premium'
+import { formatRegisterPrice } from '@app/utils/formatPremiumPrice'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -313,11 +314,11 @@ const NameResultItem = forwardRef<
         premium:
           priceData && ethPrice && !priceData.premium.isZero()
             ? formatUsd(priceData.premium, ethPrice)
-            : '$' + Math.ceil(getPremiumPrice(expireTime, new Date().getTime() / 1000)),
+            : formatRegisterPrice(getPremiumPrice(expireTime, new Date().getTime() / 1000)),
         available:
           priceData && ethPrice && !priceData.base.isZero()
             ? formatUsd(priceData.base, ethPrice)
-            : '$' + calculateRegistrationPrice(name).usd,
+            : formatRegisterPrice(calculateRegistrationPrice(name).usd),
         gracePeriod: null,
         registered: listingPrice ? formatEtherPrice(listingPrice, false, 3) : null,
         imported: null,
