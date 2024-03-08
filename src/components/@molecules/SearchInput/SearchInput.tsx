@@ -318,6 +318,7 @@ export const SearchInput = ({
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem | MarketplaceDomainItem
     const listingPrice = (selectedItem as MarketplaceDomainItem).listing_end_price
+    const expireTime = (selectedItem as MarketplaceDomainItem).expire_time
     if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
     if (selectedItem.type === 'nameWithDotEth') {
@@ -325,6 +326,7 @@ export const SearchInput = ({
         type: 'name',
         value: `${normalisedOutput}.eth`,
         listing_end_price: listingPrice ?? undefined,
+        expire_time: expireTime ?? undefined,
       }
     }
     if (!selectedItem.value) {
