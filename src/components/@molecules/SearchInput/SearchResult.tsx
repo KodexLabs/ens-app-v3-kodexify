@@ -330,6 +330,8 @@ const NameResultItem = forwardRef<
       }[registrationStatus]
     : null
 
+    console.log(name, expireTime, calculateRegistrationPrice(name).usd, getPremiumPrice(expireTime, new Date().getTime() / 1000));
+
   return (
     <SearchItem
       data-testid="search-result-name"
