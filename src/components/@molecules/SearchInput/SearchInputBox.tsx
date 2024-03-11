@@ -115,7 +115,7 @@ export const SearchInputBox = forwardRef(
           label={t('search.label')}
           hideLabel
           placeholder={t('search.placeholder')}
-          value={input}
+          value={currentSearchTerm}
           onChange={onChange}
           ref={ref as any}
           clearable
