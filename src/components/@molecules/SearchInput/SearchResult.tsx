@@ -301,14 +301,13 @@ const NameResultItem = forwardRef<
   const zorb = useZorb(name, 'name')
   const { data: ethPrice } = useEthPrice()
   const {
-    registrationStatus: ensRegStatus,
+    registrationStatus,
     isLoading,
     beautifiedName,
     priceData,
   } = useBasicName(name)
-  const kodexRegStatus =
-    getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
-  const registrationStatus = ensRegStatus || (kodexRegStatus as RegistrationStatus)
+  // const kodexRegStatus =
+  //   getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
 
   const expireTime = (domain as MarketplaceDomainItem).expire_time || 0
 
