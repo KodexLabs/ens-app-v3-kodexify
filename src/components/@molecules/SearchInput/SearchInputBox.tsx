@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { Dispatch, ForwardedRef, MouseEvent, SetStateAction, forwardRef } from 'react'
+import { Dispatch, ForwardedRef, MouseEvent, SetStateAction, forwardRef, useState, ChangeEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -95,7 +95,19 @@ export const SearchInputBox = forwardRef(
     },
     ref,
   ) => {
-    const { t } = useTranslation('common')
+    const [currentSearchTerm, setCurrentSearch] = useState(input)
+   const { t } = useTranslation('common')
+
+
+   let delayTimer: number | NodeJS.Timeout | string
+   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+     clearTimeout(delayTimer)
+     setCurrentSearch(e.target.value)
+     delayTimer = setTimeout(() => {
+       setInput(e.target.value)
+     }, 1000)
+   }
+
     return (
       <SearchInputWrapper ref={containerRef} $size={size}>
         <Input
@@ -104,7 +116,7 @@ export const SearchInputBox = forwardRef(
           hideLabel
           placeholder={t('search.placeholder')}
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={onChange}
           ref={ref as any}
           clearable
           autoComplete="off"

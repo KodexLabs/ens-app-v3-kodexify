@@ -300,16 +300,23 @@ const NameResultItem = forwardRef<
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
   const { data: ethPrice } = useEthPrice()
-  const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
+  const {
+    registrationStatus: ensRegStatus,
+    isLoading,
+    beautifiedName,
+    priceData,
+  } = useBasicName(name)
+  const kodexRegStatus =
+    getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
+  const registrationStatus = ensRegStatus || (kodexRegStatus as RegistrationStatus)
+
   const expireTime = (domain as MarketplaceDomainItem).expire_time || 0
-  const regStatus =
-    getRegistrationStatus(expireTime) || 'invalid'
 
   const listingPrice = (domain as MarketplaceDomainItem)
     ? (domain as MarketplaceDomainItem).listing_end_price
     : null
 
-  const displayPrice = regStatus
+  const displayPrice = registrationStatus
     ? {
         premium:
           priceData && ethPrice && !priceData.premium.isZero()
@@ -328,7 +335,7 @@ const NameResultItem = forwardRef<
         owned: null,
         short: null,
         unsupportedTLD: null,
-      }[regStatus]
+      }[registrationStatus]
     : null
 
   return (
@@ -353,9 +360,9 @@ const NameResultItem = forwardRef<
       )}
       {registrationStatus ? (
         <DomainPriceWrapper>
-          <StatusTag status={regStatus as RegistrationStatus} />
+          <StatusTag status={registrationStatus} />
           {displayPrice ? (
-            <StyledStatusTag status={regStatus as RegistrationStatus}>
+            <StyledStatusTag status={registrationStatus}>
               {displayPrice}
             </StyledStatusTag>
           ) : null}

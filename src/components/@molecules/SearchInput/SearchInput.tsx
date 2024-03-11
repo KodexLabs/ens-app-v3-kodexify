@@ -294,21 +294,29 @@ export const SearchInput = ({
     if (searchItem.type === 'error') {
       return [_searchItem]
     }
-    if (searchItem.type === 'text') {
+
+    if (searchItem.type === 'address') {
       if (extraItems.length > 0) {
         return [..._extraItems.slice(0, 5)]
       }
       return [_searchItem]
     }
+
+    if (kodexDomains.length > 0) {
+      const kodexSearchItems =
+        kodexDomains?.map((domain: MarketplaceDomainType) => ({
+          type: 'nameWithDotEth' as 'nameWithDotEth',
+          isHistory: false,
+          value: domain.name_ens,
+          ...domain,
+        })) || []
+ 
+ 
+      return kodexSearchItems.slice(0, 5)
+    }
+ 
     const _searchItems: AnyItem[] = _searchItem.type === 'nameWithDotEth' ? [] : [_searchItem]
-    const kodexSearchItems =
-      kodexDomains?.map((domain: MarketplaceDomainType) => ({
-        type: 'nameWithDotEth' as 'nameWithDotEth',
-        isHistory: false,
-        value: domain.name_ens,
-        ...domain,
-      })) || []
-    return [..._searchItems, ...kodexSearchItems, ...extraItems].slice(0, 5)
+    return [..._searchItems, ...extraItems].slice(0, 5)
   }, [searchItem, extraItems, kodexDomains])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
