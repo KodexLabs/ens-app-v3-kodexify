@@ -284,15 +284,11 @@ export const SearchInput = ({
   //   return []
   // }, [history, normalisedOutput, searchItem.type])
 
-  useEffect(() => {
-    if (normalisedOutput) setKodexSearchTerm(normalisedOutput)
-  }, [normalisedOutput, setKodexSearchTerm])
-
   const searchItems: (AnyItem | MarketplaceDomainItem)[] = useMemo(() => {
     const _searchItem = { ...searchItem, isHistory: false }
     // const _extraItems = extraItems
 
-    if (searchItem.type === 'text') {
+    if (!normalisedOutput && searchItem.type === 'text') {
       const historyItems = history
         .sort((a, b) => b.lastAccessed - a.lastAccessed)
         .map((item) => ({ ...item, isHistory: true }))
@@ -328,7 +324,7 @@ export const SearchInput = ({
         .map((item) => ({ ...item, isHistory: true }))
 
     return [_searchItem, ...historyItems].slice(0, 5)
-  }, [searchItem, kodexDomains, history])
+  }, [searchItem, kodexDomains, history, normalisedOutput])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
