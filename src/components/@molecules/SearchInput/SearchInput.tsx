@@ -264,25 +264,25 @@ export const SearchInput = ({
     }
   }, [isEmpty, inputIsAddress, isValid, isETH, is2LD, isShort, type, t])
 
-  const extraItems = useMemo(() => {
-    if (history.length > 0) {
-      let historyRef = history
-      if (normalisedOutput !== '') {
-        historyRef = history.filter(
-          (item) =>
-            item.value !== normalisedOutput &&
-            item.value.includes(normalisedOutput) &&
-            (searchItem.type === 'nameWithDotEth'
-              ? item.value !== `${normalisedOutput}.eth`
-              : true),
-        )
-      }
-      return historyRef
-        .sort((a, b) => b.lastAccessed - a.lastAccessed)
-        .map((item) => ({ ...item, isHistory: true }))
-    }
-    return []
-  }, [history, normalisedOutput, searchItem.type])
+  // const extraItems = useMemo(() => {
+  //   if (history.length > 0) {
+  //     let historyRef = history
+  //     if (normalisedOutput !== '') {
+  //       historyRef = history.filter(
+  //         (item) =>
+  //           item.value !== normalisedOutput &&
+  //           item.value.includes(normalisedOutput) &&
+  //           (searchItem.type === 'nameWithDotEth'
+  //             ? item.value !== `${normalisedOutput}.eth`
+  //             : true),
+  //       )
+  //     }
+  //     return historyRef
+  //       .sort((a, b) => b.lastAccessed - a.lastAccessed)
+  //       .map((item) => ({ ...item, isHistory: true }))
+  //   }
+  //   return []
+  // }, [history, normalisedOutput, searchItem.type])
 
   useEffect(() => {
     if (normalisedOutput) setKodexSearchTerm(normalisedOutput)
@@ -290,19 +290,28 @@ export const SearchInput = ({
 
   const searchItems: (AnyItem | MarketplaceDomainItem)[] = useMemo(() => {
     const _searchItem = { ...searchItem, isHistory: false }
-    const _extraItems = extraItems
-    if (searchItem.type === 'error') {
+    // const _extraItems = extraItems
+
+    if (searchItem.type === 'text') {
+      const historyItems = history
+        .sort((a, b) => b.lastAccessed - a.lastAccessed)
+        .map((item) => ({ ...item, isHistory: true }))
+
+      return [_searchItem, ...historyItems]
+    }
+    
+    if (searchItem.type === 'error' || searchItem.type === 'address') {
       return [_searchItem]
     }
 
-    if (searchItem.type === 'address') {
-      if (extraItems.length > 0) {
-        return [..._extraItems.slice(0, 5)]
-      }
-      return [_searchItem]
-    }
+    // if (searchItem.type === 'address') {
+    //   // if (extraItems.length > 0) {
+    //   //   return [..._extraItems.slice(0, 5)]
+    //   // }
+    //   return [_searchItem]
+    // }
 
-    if (kodexDomains.length > 0) {
+    if (searchItem.type === 'nameWithDotEth' && kodexDomains.length > 0) {
       const kodexSearchItems =
         kodexDomains?.map((domain: MarketplaceDomainType) => ({
           type: 'nameWithDotEth' as 'nameWithDotEth',
@@ -311,13 +320,15 @@ export const SearchInput = ({
           ...domain,
         })) || []
  
- 
       return kodexSearchItems.slice(0, 5)
     }
  
-    const _searchItems: AnyItem[] = _searchItem.type === 'nameWithDotEth' ? [] : [_searchItem]
-    return [..._searchItems, ...extraItems].slice(0, 5)
-  }, [searchItem, extraItems, kodexDomains])
+    const historyItems = history
+        .sort((a, b) => b.lastAccessed - a.lastAccessed)
+        .map((item) => ({ ...item, isHistory: true }))
+
+    return [_searchItem, ...historyItems].slice(0, 5)
+  }, [searchItem, kodexDomains, history])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
@@ -466,7 +477,10 @@ export const SearchInput = ({
       containerRef={searchInputContainerRef}
       ref={searchInputRef}
       input={inputVal}
-      setInput={setInputVal}
+      setInput={(input: string) => {
+        setInputVal(input)
+        setKodexSearchTerm(input)
+      }}
       size={size}
     />
   )

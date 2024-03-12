@@ -90,7 +90,7 @@ export const SearchInputBox = forwardRef(
     }: {
       size?: 'medium' | 'extraLarge'
       input: string
-      setInput: Dispatch<SetStateAction<string>>
+      setInput: (input: string) => void
       containerRef: ForwardedRef<HTMLDivElement>
     },
     ref,

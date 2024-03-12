@@ -56,7 +56,7 @@ const useKodexSearch = () => {
       status_type: '',
     })
 
-    const resPlain = await fetch(`https://jetty.kodex.io/search/plain?${paramString}`, {
+    const resPlain = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
       method: 'GET',
       mode: 'cors',
       headers: {
@@ -65,7 +65,7 @@ const useKodexSearch = () => {
       },
     })
 
-    const resSimilar = await fetch(`https://jetty.kodex.io/search/similar?${paramString}`, {
+    const resSimilar = await fetch(`https://jetty.kodex.io/ens/search/similar?${paramString}`, {
       method: 'GET',
       mode: 'cors',
       headers: {
@@ -109,6 +109,11 @@ const useKodexSearch = () => {
   const data = queryClient.fetchQuery({
     queryKey: ['kodexSearch', searchTerm],
     queryFn: async () => {
+      if(!searchTerm) {
+        setFetchedDomains([])
+        return []
+      }
+
       const domains = await fetchDomains()
       setFetchedDomains(domains)
       return domains
