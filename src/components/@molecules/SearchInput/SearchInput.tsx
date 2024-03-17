@@ -339,7 +339,7 @@ export const SearchInput = ({
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${normalisedOutput}.eth`,
+        value: `${selectedItem.value || normalisedOutput}.eth`,
         listing_end_price: listingPrice ?? undefined,
         expire_time: expireTime ?? undefined,
       }
