@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ComponentProps } from 'react'
 
 import { Button, Tooltip } from '@ensdomains/thorin'
@@ -32,7 +33,6 @@ export const DisabledButtonWithTooltip = ({
   mobileWidth?: number
   buttonWidth?: ButtonProps['width']
   colorStyle?: ButtonProps['colorStyle']
-  mobileButtonWidth?: string
   prefix?: ReactNodeNoStrings
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)

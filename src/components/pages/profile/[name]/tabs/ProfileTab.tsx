@@ -10,10 +10,12 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { useChainId } from '@app/hooks/useChainId'
+import { useKodexCategories } from '@app/hooks/useKodexCategories'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfileActions } from '@app/hooks/useProfileActions'
+import { getDomainHexId } from '@app/utils/getDomainId'
 import { getSupportLink } from '@app/utils/supportLinks'
 import { validateExpiry } from '@app/utils/utils'
 
@@ -52,6 +54,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     pccExpired,
     gracePeriodEndDate,
   } = nameDetails
+
+  const { categories } = useKodexCategories(getDomainHexId(name.replace('.eth', '')))
 
   const abilities = useAbilities(name)
 
@@ -132,6 +136,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         name={normalisedName}
         actions={profileActions.profileActions}
         gracePeriodEndDate={gracePeriodEndDate}
+        categories={categories}
       />
     </DetailsWrapper>
   )

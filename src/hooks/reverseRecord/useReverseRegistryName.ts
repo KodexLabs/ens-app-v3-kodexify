@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useAccount, useProvider, useQuery } from 'wagmi'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'

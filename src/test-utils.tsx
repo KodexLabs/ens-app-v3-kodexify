@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 /* eslint-disable import/no-extraneous-dependencies */
 import { StaticJsonRpcProvider } from '@ethersproject/providers/lib/url-json-rpc-provider'
 import { Wallet } from '@ethersproject/wallet'

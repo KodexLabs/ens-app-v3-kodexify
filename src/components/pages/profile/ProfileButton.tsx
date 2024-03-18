@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { isAddress } from '@ethersproject/address'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -139,23 +140,27 @@ export const OtherProfileButton = ({
     } as const
   }, [value, type, isLink])
 
+  const keyLabel = iconKey
+    ? {
+        address: (
+          <OtherContainer>
+            <OtherContainerAddressPrefix fontVariant="extraSmall">
+              {iconKey}
+            </OtherContainerAddressPrefix>
+          </OtherContainer>
+        ),
+        text: <OtherContainerTextPrefix color="grey">{iconKey}</OtherContainerTextPrefix>,
+        contenthash: <OtherContainerTextPrefix color="grey">{iconKey}</OtherContainerTextPrefix>,
+      }[type]
+    : null
+
   return (
     <RecordItem
       {...linkProps}
       value={value}
       inline
       size={breakpoints.sm ? 'large' : 'small'}
-      keyLabel={
-        type === 'address' ? (
-          <OtherContainer>
-            <OtherContainerAddressPrefix fontVariant="extraSmall">
-              {iconKey}
-            </OtherContainerAddressPrefix>
-          </OtherContainer>
-        ) : (
-          <OtherContainerTextPrefix color="grey">{iconKey}</OtherContainerTextPrefix>
-        )
-      }
+      keyLabel={keyLabel}
       data-testid={`other-profile-button-${iconKey}`}
     >
       {formattedValue}

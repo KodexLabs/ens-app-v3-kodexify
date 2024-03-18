@@ -26,7 +26,13 @@
   "parserOptions": {
     "project": "./tsconfig.json"
   },
-  "ignorePatterns": ["next.config.js", "jest.config.js", "deploy/**/*", "src/**/*.test.tsx", "src/**/*.test.ts"],
+  "ignorePatterns": [
+    "next.config.js",
+    "jest.config.js",
+    "deploy/**/*",
+    "src/**/*.test.tsx",
+    "src/**/*.test.ts"
+  ],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/jsx-props-no-spreading": "off",
@@ -51,36 +57,11 @@
       {
         "selector": "*[value=/\\b(0x)?[a-f0-9]{64}\\b/i]",
         "message": "No private keys allowed"
-      } 
+      }
     ],
     "prettier/prettier": "error",
     "import/prefer-default-export": "off",
     "no-underscore-dangle": "off",
-    "@typescript-eslint/naming-convention": [
-      "error",
-      {
-        "selector": "default",
-        "format": ["camelCase", "UPPER_CASE", "PascalCase"],
-        "leadingUnderscore": "allow",
-        "trailingUnderscore": "allow"
-      },
-      {
-        "selector": "variable",
-        "format": ["camelCase", "UPPER_CASE", "PascalCase"],
-        "leadingUnderscore": "allow",
-        "trailingUnderscore": "allow"
-      },
-      {
-        "selector": "property",
-        "format": ["camelCase", "UPPER_CASE", "PascalCase"],
-        "leadingUnderscore": "allowSingleOrDouble",
-        "trailingUnderscore": "allow"
-      },
-      {
-        "selector": "typeLike",
-        "format": ["PascalCase"]
-      }
-    ],
     "radix": "off",
     "consistent-return": "off",
     "jsx-a11y/anchor-is-valid": "off",

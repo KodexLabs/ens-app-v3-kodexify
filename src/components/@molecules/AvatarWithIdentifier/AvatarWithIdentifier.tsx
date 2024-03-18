@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'

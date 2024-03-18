@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Contract } from '@ethersproject/contracts'
 import { useProvider, useQuery } from 'wagmi'
 

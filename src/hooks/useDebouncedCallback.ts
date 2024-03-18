@@ -5,12 +5,12 @@ export default function useDebouncedCallback<T extends (...args: any[]) => Retur
   wait?: number,
   deps: DependencyList = [],
 ): T {
-  const timerId = useRef<NodeJS.Timer>()
+  const timerId = useRef<NodeJS.Timeout>()
 
   return useCallback(
     (...args: Parameters<T>) => {
-      clearTimeout(timerId.current)
       timerId.current = setTimeout(() => func(...args), wait)
+      clearTimeout(timerId.current)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [func, wait, ...deps],
