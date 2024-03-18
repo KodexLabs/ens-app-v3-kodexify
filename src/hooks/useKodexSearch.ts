@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useQueryClient } from 'wagmi'
 
+import { useFilters } from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
 import { SearchItem } from '@app/components/@molecules/SearchInput/types'
 import { buildQueryParamString } from '@app/utils/buildQueryParamString'
 import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
@@ -32,12 +33,18 @@ export type MarketplaceDomainItem = MarketplaceDomainType &
     isHistory: boolean
   }
 
+const MARKETPLACE_STATUS_PARAM_OPTIONS: Record<string, string> = {
+  Available: 'previously_owned',
+  Premium: 'premium',
+}
+
 const useKodexSearch = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [fetchedDomains, setFetchedDomains] = useState<MarketplaceDomainType[]>([])
 
   const queryClient = useQueryClient()
   const { data: ethPrice } = useEthPrice()
+  const { filters } = useFilters()
 
   const fetchDomains = async () => {
     const paramString = buildQueryParamString({
@@ -51,9 +58,12 @@ const useKodexSearch = () => {
       max_listing_price: '',
       min_listing_price: '',
       search_terms: '',
-      name_symbols_type: '',
+      name_symbols_type: filters.type.length > 0 ? filters.type.join(',').toLowerCase() : '',
       has_offers_selector: '',
-      status_type: '',
+      status_type:
+        filters.status
+          .map((statusValue) => MARKETPLACE_STATUS_PARAM_OPTIONS[statusValue])
+          .filter((e) => e)[0] || '',
     })
 
     const resPlain = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
@@ -107,9 +117,9 @@ const useKodexSearch = () => {
   }
 
   const data = queryClient.fetchQuery({
-    queryKey: ['kodexSearch', searchTerm],
+    queryKey: ['kodexSearch', searchTerm, filters],
     queryFn: async () => {
-      if(!searchTerm) {
+      if (!searchTerm) {
         setFetchedDomains([])
         return []
       }

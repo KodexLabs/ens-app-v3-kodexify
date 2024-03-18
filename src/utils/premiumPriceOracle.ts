@@ -6,13 +6,21 @@ const FACTOR = 0.5
 // All the dates and time parameters are parsed & returned in seconds (not milliseconds)
 export default class PremiumPriceOracle {
   startingPremiumInUsd: number
+
   totalDays: number
+
   lastValue: number
+
   releasedDate: number
+
   zeroPremiumDate: number
+
   diff: number
+
   rate: number
+
   diffInHour: number
+
   hourlyRate: number
 
   constructor(expiryDate: number) {
@@ -48,9 +56,7 @@ export default class PremiumPriceOracle {
     if (amount < this.lastValue) {
       daysPast = this.totalDays
     } else {
-      daysPast =
-        Math.log((amount + this.lastValue) / this.startingPremiumInUsd) /
-        Math.log(FACTOR)
+      daysPast = Math.log((amount + this.lastValue) / this.startingPremiumInUsd) / Math.log(FACTOR)
     }
     const r = this.releasedDate + daysPast * DAY_IN_SECONDS
     return r
@@ -60,13 +66,12 @@ export default class PremiumPriceOracle {
     const premium = this.startingPremiumInUsd * FACTOR ** daysPast
     if (premium >= this.lastValue) {
       return premium
-    } else {
-      return 0
     }
+    return 0
   }
 
   getAmountByDateRange(currentDate: number) {
-    let daysPast = this.getDaysPast(currentDate)
+    const daysPast = this.getDaysPast(currentDate)
     return this.getTargetAmountByDaysPast(daysPast)
   }
 }

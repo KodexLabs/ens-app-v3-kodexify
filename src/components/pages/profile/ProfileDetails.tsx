@@ -292,6 +292,7 @@ export const ProfileDetails = ({
   isCached,
   name,
   gracePeriodEndDate,
+  categories,
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
@@ -303,6 +304,7 @@ export const ProfileDetails = ({
   isCached?: boolean
   name: string
   gracePeriodEndDate?: Date
+  categories?: string[]
 }) => {
   const breakpoint = useBreakpoint()
 
@@ -319,6 +321,8 @@ export const ProfileDetails = ({
   ]
 
   const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
+
+  const formattedCategories = categories?.map((cat) => ({ key: '', value: cat }))
 
   const is2LDEth = checkETH2LDFromName(name)
 
@@ -357,6 +361,12 @@ export const ProfileDetails = ({
           condition={!!mappedOwners}
           array={mappedOwners!}
           button={OwnerProfileButton}
+        />
+        <ProfileSection
+          label="categories"
+          condition={formattedCategories && formattedCategories.length > 0}
+          array={formattedCategories!}
+          button={OtherProfileButton}
         />
       </RecordsStack>
       {actions && actions?.length > 0 && (
