@@ -18,15 +18,14 @@ import { MarketplaceDomainItem } from '@app/hooks/useKodexSearch'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { formatEtherPrice } from '@app/utils/formatEtherPrice'
+import { formatRegisterPrice } from '@app/utils/formatPremiumPrice'
 import { formatUsd } from '@app/utils/formatUsd'
-import { getRegistrationStatus } from '@app/utils/getRegistrationStatus'
-import type { RegistrationStatus } from '@app/utils/registrationStatus'
+import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
+import { getPremiumPrice } from '@app/utils/premium'
+import { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 
 import { AnyItem } from './types'
-import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
-import { getPremiumPrice } from '@app/utils/premium'
-import { formatRegisterPrice } from '@app/utils/formatPremiumPrice'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -271,6 +270,14 @@ const TextWrapper = styled.div(
   `,
 )
 
+const CategoriesText = styled.div(
+  () => css`
+    color: gray;
+    text-align: left;
+    font-size: 12px;
+  `,
+)
+
 const PlaceholderResultItem = ({ input }: { input: string }) => {
   const zorb = useZorb('placeholder', 'name')
   const beautifiedName = useBeautifiedName(input)
@@ -300,12 +307,7 @@ const NameResultItem = forwardRef<
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
   const { data: ethPrice } = useEthPrice()
-  const {
-    registrationStatus,
-    isLoading,
-    beautifiedName,
-    priceData,
-  } = useBasicName(name)
+  const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
   // const kodexRegStatus =
   //   getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
 
@@ -350,6 +352,9 @@ const NameResultItem = forwardRef<
         </AvatarWrapper>
         <TextWrapper>
           <Typography weight="bold">{beautifiedName}</Typography>
+          <CategoriesText>
+            {(domain as MarketplaceDomainItem).terms?.slice(0, 2).join(', ')}
+          </CategoriesText>
         </TextWrapper>
       </LeadingSearchItem>
       {isLoading && (
@@ -361,9 +366,7 @@ const NameResultItem = forwardRef<
         <DomainPriceWrapper>
           <StatusTag status={registrationStatus} />
           {displayPrice ? (
-            <StyledStatusTag status={registrationStatus}>
-              {displayPrice}
-            </StyledStatusTag>
+            <StyledStatusTag status={registrationStatus}>{displayPrice}</StyledStatusTag>
           ) : null}
         </DomainPriceWrapper>
       ) : null}

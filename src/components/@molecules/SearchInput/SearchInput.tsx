@@ -292,10 +292,11 @@ export const SearchInput = ({
       const historyItems = history
         .sort((a, b) => b.lastAccessed - a.lastAccessed)
         .map((item) => ({ ...item, isHistory: true }))
+        .slice(0, 5)
 
       return [_searchItem, ...historyItems]
     }
-    
+
     if (searchItem.type === 'error' || searchItem.type === 'address') {
       return [_searchItem]
     }
@@ -315,13 +316,13 @@ export const SearchInput = ({
           value: domain.name_ens,
           ...domain,
         })) || []
- 
+
       return kodexSearchItems.slice(0, 5)
     }
- 
+
     const historyItems = history
-        .sort((a, b) => b.lastAccessed - a.lastAccessed)
-        .map((item) => ({ ...item, isHistory: true }))
+      .sort((a, b) => b.lastAccessed - a.lastAccessed)
+      .map((item) => ({ ...item, isHistory: true }))
 
     return [_searchItem, ...historyItems].slice(0, 5)
   }, [searchItem, kodexDomains, history, normalisedOutput])
@@ -332,16 +333,20 @@ export const SearchInput = ({
   const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem | MarketplaceDomainItem
-    const listingPrice = (selectedItem as MarketplaceDomainItem).listing_end_price
-    const expireTime = (selectedItem as MarketplaceDomainItem).expire_time
+    const listingPrice = selectedItem
+      ? (selectedItem as MarketplaceDomainItem).listing_end_price
+      : null
+    const domainTerms = selectedItem ? (selectedItem as MarketplaceDomainItem).terms : null
+    const expireTime = selectedItem ? (selectedItem as MarketplaceDomainItem).expire_time : null
     if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${selectedItem.value || normalisedOutput}.eth`,
+        value: `${selectedItem.value}.eth`,
         listing_end_price: listingPrice ?? undefined,
         expire_time: expireTime ?? undefined,
+        terms: domainTerms ?? undefined,
       }
     }
     if (!selectedItem.value) {
@@ -460,13 +465,27 @@ export const SearchInput = ({
     const searchInput = searchInputRef.current
     searchInput?.addEventListener('keydown', handleKeyDown)
     searchInput?.addEventListener('focusin', handleFocusIn)
-    searchInput?.addEventListener('focusout', handleFocusOut)
+    // searchInput?.addEventListener('focusout', handleFocusOut)
     return () => {
       searchInput?.removeEventListener('keydown', handleKeyDown)
       searchInput?.removeEventListener('focusin', handleFocusIn)
-      searchInput?.removeEventListener('focusout', handleFocusOut)
+      // searchInput?.removeEventListener('focusout', handleFocusOut)
     }
   }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef])
+
+  const handleClickOutside = (e: any) => {
+    if (searchInputContainerRef.current && !searchInputContainerRef.current.contains(e.target)) {
+      toggle(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInputContainerRef])
 
   const SearchInputElement = (
     <SearchInputBox

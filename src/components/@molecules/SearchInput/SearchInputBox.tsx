@@ -3,15 +3,21 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { Dispatch, ForwardedRef, MouseEvent, SetStateAction, forwardRef, useState, ChangeEvent } from 'react'
+import { ChangeEvent, ForwardedRef, MouseEvent, forwardRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
 
+import { SearchInputFilters } from './SearchInputFilters'
+
 const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2.5xLarge']};
     border-color: ${theme.colors.border};
@@ -96,20 +102,20 @@ export const SearchInputBox = forwardRef(
     ref,
   ) => {
     const [currentSearchTerm, setCurrentSearch] = useState(input)
-   const { t } = useTranslation('common')
+    const { t } = useTranslation('common')
 
-
-   let delayTimer: number | NodeJS.Timeout | string
-   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-     clearTimeout(delayTimer)
-     setCurrentSearch(e.target.value)
-     delayTimer = setTimeout(() => {
-       setInput(e.target.value)
-     }, 1000)
-   }
+    let delayTimer: number | NodeJS.Timeout | string
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+      clearTimeout(delayTimer)
+      setCurrentSearch(e.target.value)
+      delayTimer = setTimeout(() => {
+        setInput(e.target.value)
+      }, 1000)
+    }
 
     return (
       <SearchInputWrapper ref={containerRef} $size={size}>
+        {size === 'extraLarge' && <SearchInputFilters />}
         <Input
           size={size}
           label={t('search.label')}
