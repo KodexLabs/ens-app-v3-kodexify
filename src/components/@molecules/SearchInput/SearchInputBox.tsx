@@ -17,7 +17,7 @@ const SearchWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
     z-index: 1;
     display: flex;
     gap: 40px;
-    width: ${$size === 'extraLarge' ? '84%' : '100%'};
+    width: 100%;
     margin: 0 auto;
   `,
 )
