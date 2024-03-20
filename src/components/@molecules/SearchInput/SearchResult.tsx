@@ -352,9 +352,11 @@ const NameResultItem = forwardRef<
         </AvatarWrapper>
         <TextWrapper>
           <Typography weight="bold">{beautifiedName}</Typography>
-          {((domain as MarketplaceDomainItem).terms?.length || 0) > 0 &&<CategoriesText>
-            {(domain as MarketplaceDomainItem).terms?.slice(0, 2).join(', ')}
-          </CategoriesText>}
+          {((domain as MarketplaceDomainItem).terms?.length || 0) > 0 && (
+            <CategoriesText>
+              {(domain as MarketplaceDomainItem).terms?.slice(0, 2).join(', ')}
+            </CategoriesText>
+          )}
         </TextWrapper>
       </LeadingSearchItem>
       {isLoading && (

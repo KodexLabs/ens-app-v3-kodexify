@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import FiltersSvg from 'src/assets/Filter.svg'
+import { useEffect } from 'react'
+import FiltersSvg from 'src/assets/filters-2.svg'
 import styled, { css } from 'styled-components'
 
 import { CheckSVG } from '@ensdomains/thorin'
@@ -12,7 +13,7 @@ const FiltersWrapper = styled.div(
   () => css`
     position: relative;
     width: fit-content;
-    width: 100%;
+    width: 50px;
     height: 50px;
   `,
 )
@@ -21,16 +22,13 @@ const FiltersButtonContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: 10px;
-    font-size: 18px;
-    font-weight: 600;
-    color: gray;
     align-items: center;
+    justify-content: center;
     transition: all 0.15s ease-in-out;
     cursor: pointer;
     position: relative;
-    width: fit-content;
-    height: 50px;
-    padding: 7px 15px 5px;
+    width: 80px;
+    height: 80px;
     background: white;
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2xLarge']};
@@ -52,8 +50,8 @@ const FiltersContainer = styled.div(
     position: absolute;
     top: 0;
     width: 200px;
-    right: 102.5%;
-    height: 255px;
+    right: 120%;
+    height: 260px;
     background: white;
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2xLarge']};
@@ -77,6 +75,11 @@ const FiltersOptionContainer = styled.div(
     width: 100%;
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
+    color: black;
+    &:hover {
+      color: #444;
+    }
   `,
 )
 
@@ -92,42 +95,33 @@ const Checkbox = styled.div(
   `,
 )
 
+const FilterTitle = styled.p(
+  () => css`
+    color: gray;
+    font-weight: 600;
+    font-size: 18px;
+  `,
+)
+
 const FiltersIcon = styled.svg(
   () => css`
-    width: 25px;
-    height: 25px;
+    width: 45px;
+    height: 45px;
   `,
 )
 
 const CheckIcon = styled.svg(
   () => css`
-    width: 15px;
-    height: 15px;
+    width: 14px;
+    height: 14px;
+    color: #717171;
   `,
 )
 
 export const SearchInputFilters = () => {
   const { open, filters, setOpen, toggleFilterStatus, toggleFilterType } = useFilters()
 
-  // const filtersRef = useRef<HTMLDivElement>(null)
-
-  // const handleClickOutside = (e: any) => {
-  //   if (filtersRef.current && !filtersRef.current.contains(e.target)) {
-  //     setOpen(false)
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (open) {
-  //     document.addEventListener('mousedown', handleClickOutside)
-  //   } else {
-  //     document.removeEventListener('mousedown', handleClickOutside)
-  //   }
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [filtersRef, open])
+  useEffect(() => setOpen(false), [])
 
   return (
     <FiltersWrapper>
@@ -137,13 +131,13 @@ export const SearchInputFilters = () => {
         }}
       >
         <FiltersIcon as={FiltersSvg} />
-        <p>{open ? 'Close' : 'Open'} Filters</p>
+        {/* <p>{open ? 'Close' : 'Open'} Filters</p> */}
       </FiltersButtonContainer>
       {open && (
         <FiltersContainer>
           {Object.keys(filtersDefaultState).map((key) => (
             <FiltersKeyContainer>
-              <p>{key[0].toUpperCase() + key.slice(1)}</p>
+              <FilterTitle>{key[0].toUpperCase() + key.slice(1)}</FilterTitle>
               {filtersDefaultState[key as FilterKeysType].map((option) => (
                 <FiltersOptionContainer
                   key={option}

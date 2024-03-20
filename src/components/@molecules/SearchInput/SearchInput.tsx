@@ -46,12 +46,14 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
 
 const SearchResultsContainer = styled.div<{
   $state: TransitionState
+  $size: 'medium' | 'extraLarge'
 }>(
-  ({ theme, $state }) => css`
+  ({ theme, $state, $size }) => css`
     position: absolute;
     width: 100%;
     height: min-content;
     top: calc(100% + ${theme.space['3']});
+    margin-left: ${$size === 'extraLarge' ? '45px' : 0};
 
     background-color: #f7f7f7;
     box-shadow: 0 2px 12px ${theme.colors.border};
@@ -507,6 +509,7 @@ export const SearchInput = ({
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
+      $size={size}
       data-testid="search-input-results"
       data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
