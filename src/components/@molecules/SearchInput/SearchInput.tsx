@@ -338,6 +338,10 @@ export const SearchInput = ({
       : null
     const domainTerms = selectedItem ? (selectedItem as MarketplaceDomainItem).terms : null
     const expireTime = selectedItem ? (selectedItem as MarketplaceDomainItem).expire_time : null
+    const premiumRegPrice = selectedItem
+      ? (selectedItem as MarketplaceDomainItem).premium_reg_price
+      : null
+
     if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
     if (selectedItem.type === 'nameWithDotEth') {
@@ -347,6 +351,7 @@ export const SearchInput = ({
         listing_end_price: listingPrice ?? undefined,
         expire_time: expireTime ?? undefined,
         terms: domainTerms ?? undefined,
+        premium_reg_price: premiumRegPrice ?? undefined,
       }
     }
     if (!selectedItem.value) {

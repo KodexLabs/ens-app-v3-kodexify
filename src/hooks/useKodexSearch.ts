@@ -24,6 +24,7 @@ export type MarketplaceDomainType = {
   listing_end_price: null | string
   highest_offer: string | null
   registration_price: number | null
+  premium_reg_price: string | null
   has_offers: boolean
   views: number
 }
@@ -110,6 +111,7 @@ const useKodexSearch = () => {
         taxonomies: null,
         highest_offer: null,
         terms: null,
+        premium_reg_price: null,
         views: 0,
       })
 

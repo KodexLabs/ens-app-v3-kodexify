@@ -17,7 +17,6 @@ import { useEthPrice } from '@app/hooks/useEthPrice'
 import { MarketplaceDomainItem } from '@app/hooks/useKodexSearch'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
-import { formatEtherPrice } from '@app/utils/formatEtherPrice'
 import { formatRegisterPrice } from '@app/utils/formatPremiumPrice'
 import { formatUsd } from '@app/utils/formatUsd'
 import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
@@ -313,27 +312,30 @@ const NameResultItem = forwardRef<
 
   const expireTime = (domain as MarketplaceDomainItem).expire_time || 0
 
-  const listingPrice = (domain as MarketplaceDomainItem)
-    ? (domain as MarketplaceDomainItem).listing_end_price
+  const lastPremiumRegistration = (domain as MarketplaceDomainItem)
+    ? (domain as MarketplaceDomainItem).premium_reg_price
     : null
 
   const displayPrice = registrationStatus
     ? {
         premium:
           priceData && ethPrice && !priceData.premium.isZero()
-            ? formatUsd(priceData.premium, ethPrice)
+            ? formatUsd(priceData.premium.toString(), ethPrice)
             : formatRegisterPrice(getPremiumPrice(expireTime, new Date().getTime() / 1000)),
         available:
           priceData && ethPrice && !priceData.base.isZero()
-            ? formatUsd(priceData.base, ethPrice)
+            ? formatUsd(priceData.base.toString(), ethPrice)
             : formatRegisterPrice(calculateRegistrationPrice(name).usd),
         gracePeriod: null,
-        registered: listingPrice ? formatEtherPrice(listingPrice, false, 3) : null,
+        registered:
+          lastPremiumRegistration && ethPrice ? formatUsd(lastPremiumRegistration, ethPrice) : null,
         imported: null,
         notImported: null,
         invalid: null,
         notOwned: null,
-        owned: null,
+        owned: lastPremiumRegistration
+          ? formatRegisterPrice(parseFloat(lastPremiumRegistration))
+          : null,
         short: null,
         unsupportedTLD: null,
       }[registrationStatus]
