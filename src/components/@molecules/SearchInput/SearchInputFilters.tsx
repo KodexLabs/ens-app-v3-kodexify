@@ -2,7 +2,7 @@
 
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { useEffect } from 'react'
-import FiltersSvg from 'src/assets/filters-2.svg'
+// import FiltersSvg from 'src/assets/filters-2.svg'
 import styled, { css } from 'styled-components'
 
 import { CheckSVG } from '@ensdomains/thorin'
@@ -21,6 +21,7 @@ const FiltersWrapper = styled.div(
 const FiltersButtonContainer = styled.div(
   ({ theme }) => css`
     display: flex;
+    flex-direction: column;
     gap: 10px;
     align-items: center;
     justify-content: center;
@@ -103,18 +104,40 @@ const FilterTitle = styled.p(
   `,
 )
 
-const FiltersIcon = styled.svg(
-  () => css`
-    width: 45px;
-    height: 45px;
-  `,
-)
+// const FiltersIcon = styled.svg(
+//   () => css`
+//     width: 45px;
+//     height: 45px;
+//   `,
+// )
 
 const CheckIcon = styled.svg(
   () => css`
     width: 14px;
     height: 14px;
     color: #717171;
+  `,
+)
+
+const LineIndexTransformations = [
+  'rotate(45deg) translate(10px, 11px)',
+  'rotate(0)',
+  'rotate(-45deg) translate(10px, -11px)',
+]
+
+const Line = styled.div<{
+  $index: number
+  $open: boolean
+}>(
+  ({ $index, $open }) => css`
+    display: block;
+    width: ${$open ? '45px' : `${45 - $index * 10}px`};
+    height: 5px;
+    opacity: ${$open && $index === 1 ? 0 : 1};
+    background-color: #717171;
+    border-radius: 10px;
+    transition: 150ms ease-out;
+    transform: ${$open ? LineIndexTransformations[$index] : 'rotate(0)'};
   `,
 )
 
@@ -130,8 +153,11 @@ export const SearchInputFilters = () => {
           setOpen(!open)
         }}
       >
-        <FiltersIcon as={FiltersSvg} />
+        {/* <FiltersIcon as={FiltersSvg} /> */}
         {/* <p>{open ? 'Close' : 'Open'} Filters</p> */}
+        {new Array(3).fill(1).map((_, i) => (
+          <Line $index={i} $open={open} />
+        ))}
       </FiltersButtonContainer>
       {open && (
         <FiltersContainer>
