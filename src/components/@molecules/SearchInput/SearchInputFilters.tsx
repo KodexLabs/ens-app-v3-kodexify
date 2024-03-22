@@ -136,7 +136,7 @@ const Line = styled.div<{
     opacity: ${$open && $index === 1 ? 0 : 1};
     background-color: #717171;
     border-radius: 10px;
-    transition: 150ms ease-out;
+    transition: 100ms ease-out;
     transform: ${$open ? LineIndexTransformations[$index] : 'rotate(0)'};
   `,
 )
