@@ -46,12 +46,14 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
 
 const SearchResultsContainer = styled.div<{
   $state: TransitionState
+  $size: 'medium' | 'extraLarge'
 }>(
-  ({ theme, $state }) => css`
+  ({ theme, $state, $size }) => css`
     position: absolute;
     width: 100%;
     height: min-content;
     top: calc(100% + ${theme.space['3']});
+    margin-left: ${$size === 'extraLarge' ? '45px' : 0};
 
     background-color: #f7f7f7;
     box-shadow: 0 2px 12px ${theme.colors.border};
@@ -68,6 +70,10 @@ const SearchResultsContainer = styled.div<{
     transform: translateY(-${theme.space['2']});
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
       0s width linear 0s;
+
+    @media only screen and (max-width: 640px) {
+      margin-left: 0;
+    }
 
     ${$state === 'entered'
       ? css`
@@ -317,7 +323,7 @@ export const SearchInput = ({
           ...domain,
         })) || []
 
-      return kodexSearchItems.slice(0, 5)
+      return kodexSearchItems.slice(0, 6)
     }
 
     const historyItems = history

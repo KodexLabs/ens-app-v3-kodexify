@@ -13,8 +13,12 @@ const FiltersWrapper = styled.div(
   () => css`
     position: relative;
     width: fit-content;
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
+
+    @media only screen and (max-width: 640px) {
+      width: 60px;
+    }
   `,
 )
 
@@ -38,12 +42,16 @@ const FiltersButtonContainer = styled.div(
     &:hover {
       opacity: 0.8;
     }
+
+    @media only screen and (max-width: 640px) {
+      width: 60px;
+    }
   `,
 )
 
-const FiltersContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
+const FiltersContainer = styled.div<{ $open: boolean }>(
+  ({ theme, $open }) => css`
+    display: ${$open ? 'flex' : 'none'};
     flex-direction: column;
     gap: 20px;
     padding: 16px;
@@ -52,12 +60,30 @@ const FiltersContainer = styled.div(
     top: 0;
     width: 200px;
     right: 120%;
-    height: 260px;
+    height: 340px;
     background: white;
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2xLarge']};
     border-color: ${theme.colors.border};
     border-width: 1px;
+
+    @media only screen and (max-width: 940px) {
+      width: 470px;
+      top: -10px;
+      left: 0;
+      transform: ${$open ? 'translateY(-340px)' : 'translateY(0)'};
+    }
+
+    @media only screen and (max-width: 640px) {
+      display: flex;
+      width: 100%;
+      position: fixed;
+      top: 100vh;
+      left: 0;
+      transform: ${$open ? 'translateY(-340px)' : 'translateY(0)'};
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+    }
   `,
 )
 
@@ -75,6 +101,7 @@ const FiltersOptionContainer = styled.div(
     gap: 5px;
     width: 100%;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     cursor: pointer;
     color: black;
@@ -138,11 +165,16 @@ const Line = styled.div<{
     border-radius: 10px;
     transition: 100ms ease-out;
     transform: ${$open ? LineIndexTransformations[$index] : 'rotate(0)'};
+
+    @media only screen and (max-width: 640px) {
+      width: ${$open ? '35px' : `${35 - $index * 10}px`};
+    }
   `,
 )
 
 export const SearchInputFilters = () => {
-  const { open, filters, setOpen, toggleFilterStatus, toggleFilterType } = useFilters()
+  const { open, filters, setOpen, toggleFilterResults, toggleFilterStatus, toggleFilterType } =
+    useFilters()
 
   useEffect(() => setOpen(false), [])
 
@@ -159,31 +191,40 @@ export const SearchInputFilters = () => {
           <Line $index={i} $open={open} />
         ))}
       </FiltersButtonContainer>
-      {open && (
-        <FiltersContainer>
-          {Object.keys(filtersDefaultState).map((key) => (
-            <FiltersKeyContainer>
-              <FilterTitle>{key[0].toUpperCase() + key.slice(1)}</FilterTitle>
-              {filtersDefaultState[key as FilterKeysType].map((option) => (
-                <FiltersOptionContainer
-                  key={option}
-                  onClick={() => {
-                    if (key === 'status') toggleFilterStatus(option)
-                    if (key === 'type') toggleFilterType(option)
-                  }}
-                >
-                  <p>{option}</p>
-                  <Checkbox>
-                    {filters[key as FilterKeysType].includes(option) ? (
-                      <CheckIcon as={CheckSVG} />
-                    ) : null}
-                  </Checkbox>
-                </FiltersOptionContainer>
-              ))}
-            </FiltersKeyContainer>
-          ))}
-        </FiltersContainer>
-      )}
+      <FiltersContainer $open={open}>
+        {Object.keys(filtersDefaultState).map((key) => (
+          <FiltersKeyContainer>
+            <FilterTitle>{key[0].toUpperCase() + key.slice(1)}</FilterTitle>
+            {filtersDefaultState[key as FilterKeysType].map((option) => (
+              <FiltersOptionContainer
+                key={option}
+                onClick={() => {
+                  switch (key) {
+                    case 'results':
+                      toggleFilterResults(option)
+                      break
+                    case 'status':
+                      toggleFilterStatus(option)
+                      break
+                    case 'type':
+                      toggleFilterType(option)
+                      break
+                    default:
+                      break
+                  }
+                }}
+              >
+                <p>{option}</p>
+                <Checkbox>
+                  {filters[key as FilterKeysType].includes(option) ? (
+                    <CheckIcon as={CheckSVG} />
+                  ) : null}
+                </Checkbox>
+              </FiltersOptionContainer>
+            ))}
+          </FiltersKeyContainer>
+        ))}
+      </FiltersContainer>
     </FiltersWrapper>
   )
 }

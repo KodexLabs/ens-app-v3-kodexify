@@ -16,9 +16,17 @@ const SearchWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
     z-index: 1;
     display: flex;
-    gap: 40px;
     width: 100%;
+    gap: 10px;
     margin: 0 auto;
+
+    @media only screen and (max-width: 720px) {
+      width: 90%;
+    }
+
+    @media only screen and (max-width: 640px) {
+      width: 100%;
+    }
   `,
 )
 
@@ -35,6 +43,12 @@ const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
       color: ${theme.colors.greyPrimary};
       font-weight: ${theme.fontWeights.bold};
     }
+
+    @media only screen and (max-width: 640px) {
+      width: 100%;
+      border-radius: ${theme.radii.extraLarge};
+    }
+
     ${$size === 'medium' &&
     css`
       max-width: ${theme.space['96']};

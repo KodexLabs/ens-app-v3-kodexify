@@ -2,7 +2,10 @@
 import { useState } from 'react'
 import { useQueryClient } from 'wagmi'
 
-import { useFilters } from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
+import {
+  filtersDefaultState,
+  useFilters,
+} from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
 import { SearchItem } from '@app/components/@molecules/SearchInput/types'
 import { buildQueryParamString } from '@app/utils/buildQueryParamString'
 import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
@@ -47,9 +50,11 @@ const useKodexSearch = () => {
   const { data: ethPrice } = useEthPrice()
   const { filters } = useFilters()
 
+  const isSearchSimilar = filters.results.includes(filtersDefaultState.results[0])
+
   const fetchDomains = async () => {
     const paramString = buildQueryParamString({
-      limit: 3,
+      limit: isSearchSimilar ? 3 : 6,
       offset: 0,
       search_type: '',
       order_type: 'default',
@@ -90,7 +95,7 @@ const useKodexSearch = () => {
 
     const allDomains = [
       ...(jsonPlain.domains as MarketplaceDomainType[]),
-      ...(jsonSimilar.domains as MarketplaceDomainType[]),
+      ...(isSearchSimilar ? (jsonSimilar.domains as MarketplaceDomainType[]) : []),
     ]
 
     if ((jsonPlain.domains as MarketplaceDomainType[]).length === 0)
