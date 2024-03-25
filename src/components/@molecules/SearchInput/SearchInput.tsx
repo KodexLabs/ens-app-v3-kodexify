@@ -53,7 +53,6 @@ const SearchResultsContainer = styled.div<{
     width: 100%;
     height: min-content;
     top: calc(100% + ${theme.space['3']});
-    margin-left: ${$size === 'extraLarge' ? '45px' : 0};
 
     background-color: #f7f7f7;
     box-shadow: 0 2px 12px ${theme.colors.border};
