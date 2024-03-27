@@ -101,7 +101,7 @@ const useKodexSearch = () => {
       ...(isSearchSimilar ? (jsonSimilar.domains as MarketplaceDomainType[]) : []),
     ]
 
-    if ((jsonPlain.domains as MarketplaceDomainType[]).length === 0)
+    if (!(jsonPlain.domains as MarketplaceDomainType[]).map((d) => d.name_ens).includes(searchTerm))
       allDomains.unshift({
         expire_time: 0,
         name: `${searchTerm.replace('.eth', '')}.eth`,
