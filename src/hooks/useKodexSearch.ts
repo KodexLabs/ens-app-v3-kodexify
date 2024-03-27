@@ -55,21 +55,25 @@ const useKodexSearch = () => {
     const paramString = buildQueryParamString({
       limit: isSearchSimilar ? 3 : 6,
       offset: 0,
-      search_type: '',
+      search_type:
+        filters.status.length === 1 && filters.status.includes('Registered') ? 'marketplace' : '',
       order_type: 'default',
       name: searchTerm.replace('.eth', ''),
-      max_domain_length: '', // No upper limit filter
-      min_domain_length: '', // Lower limit of 10
+      max_domain_length: '',
+      min_domain_length: '',
       max_listing_price: '',
       min_listing_price: '',
       search_terms: '',
       name_symbols_type: filters.type.length > 0 ? filters.type.join(',').toLowerCase() : '',
       has_offers_selector: '',
       status_type:
-        filters.status
-          .map((statusValue) => MARKETPLACE_STATUS_PARAM_OPTIONS[statusValue])
-          .filter((e) => e)[0] || '',
+        filters.status.length < 3
+          ? filters.status
+              .map((statusValue) => MARKETPLACE_STATUS_PARAM_OPTIONS[statusValue])
+              .filter((e) => e)[0] || ''
+          : '',
     })
+ 
 
     const resPlain = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
       method: 'GET',
