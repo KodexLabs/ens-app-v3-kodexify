@@ -339,7 +339,7 @@ export const SearchInput = ({
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem | MarketplaceDomainItem
     const listingPrice = selectedItem
-      ? (selectedItem as MarketplaceDomainItem).listing_end_price
+      ? (selectedItem as MarketplaceDomainItem).listing_price
       : null
     const domainTerms = selectedItem ? (selectedItem as MarketplaceDomainItem).terms : null
     const expireTime = selectedItem ? (selectedItem as MarketplaceDomainItem).expire_time : null
@@ -353,7 +353,7 @@ export const SearchInput = ({
       selectedItem = {
         type: 'name',
         value: `${selectedItem.value}.eth`,
-        listing_end_price: listingPrice ?? undefined,
+        listing_price: listingPrice ?? undefined,
         expire_time: expireTime ?? undefined,
         terms: domainTerms ?? undefined,
         premium_reg_price: premiumRegPrice ?? undefined,

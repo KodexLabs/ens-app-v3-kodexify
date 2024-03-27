@@ -22,9 +22,8 @@ export type MarketplaceDomainType = {
   last_price: string | null
   last_sale_asset: string | null
   likes: number
-  listing_time: null | string | number // TODO: find type
-  listing_start_price: null | string | number // TODO: find type
-  listing_end_price: null | string
+  listing_time: null | string | number
+  listing_price: null | string
   highest_offer: string | null
   registration_price: number | null
   premium_reg_price: string | null
@@ -110,8 +109,7 @@ const useKodexSearch = () => {
         last_sale_asset: null,
         likes: 0,
         owner: null,
-        listing_end_price: null,
-        listing_start_price: null,
+        listing_price: null,
         listing_time: null,
         taxonomies: null,
         highest_offer: null,
