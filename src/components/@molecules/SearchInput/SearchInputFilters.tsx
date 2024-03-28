@@ -82,7 +82,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
       z-index: 9999;
       top: 100%;
       left: 0;
-      transform: ${$open ? 'translateY(-340px)' : 'translateY(0)'};
+      transform: ${$open ? 'translateY(-350px)' : 'translateY(0)'};
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
     }
