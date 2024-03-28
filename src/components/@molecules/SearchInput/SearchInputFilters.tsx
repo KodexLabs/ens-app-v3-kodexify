@@ -17,7 +17,7 @@ const FiltersWrapper = styled.div(
     height: 80px;
 
     @media only screen and (max-width: 640px) {
-      width: 60px;
+      width: 65px;
     }
   `,
 )
@@ -44,7 +44,7 @@ const FiltersButtonContainer = styled.div(
     }
 
     @media only screen and (max-width: 640px) {
-      width: 60px;
+      width: 65px;
     }
   `,
 )
@@ -62,7 +62,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
     right: 120%;
     height: 340px;
     background: white;
-    box-shadow: ${theme.boxShadows['0.25']};
+    box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
     border-color: ${theme.colors.border};
     border-width: 1px;
@@ -78,7 +78,8 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
       display: flex;
       width: 100%;
       position: fixed;
-      top: 100vh;
+      z-index: 9999;
+      top: 100%;
       left: 0;
       transform: ${$open ? 'translateY(-340px)' : 'translateY(0)'};
       border-bottom-right-radius: 0;
@@ -163,11 +164,11 @@ const Line = styled.div<{
     opacity: ${$open && $index === 1 ? 0 : 1};
     background-color: #717171;
     border-radius: 10px;
-    transition: 100ms ease-out;
+    transition: 150ms ease-out;
     transform: ${$open ? LineIndexTransformations[$index] : 'rotate(0)'};
 
     @media only screen and (max-width: 640px) {
-      width: ${$open ? '35px' : `${35 - $index * 10}px`};
+      width: ${$open ? '38px' : `${35 - $index * 10}px`};
     }
   `,
 )

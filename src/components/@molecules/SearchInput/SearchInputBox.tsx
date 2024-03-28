@@ -14,7 +14,7 @@ import { SearchInputFilters } from './SearchInputFilters'
 
 const SearchWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
-    z-index: 1;
+    z-index: 1000;
     display: flex;
     width: 100%;
     gap: 10px;
@@ -161,6 +161,7 @@ export const SearchInputBox = forwardRef(
             icon={size === 'medium' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
             spellCheck="false"
             data-testid="search-input-box"
+            autoCapitalize="off"
           />
         </SearchInputWrapper>
       </SearchWrapper>

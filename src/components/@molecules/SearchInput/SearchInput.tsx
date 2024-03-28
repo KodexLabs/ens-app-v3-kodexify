@@ -13,7 +13,7 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { useQueryClient } from 'wagmi'
 
-import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
+import { BackdropSurface, Portal, mq } from '@ensdomains/thorin'
 
 import { BatchReturn } from '@app/hooks/useBasicName'
 import useKodexSearch, {
@@ -65,7 +65,7 @@ const SearchResultsContainer = styled.div<{
     overflow: hidden;
 
     opacity: 0;
-    z-index: 1000;
+    z-index: 100;
     transform: translateY(-${theme.space['2']});
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
       0s width linear 0s;
@@ -121,12 +121,6 @@ const InputAndCancel = styled.div(
   `,
 )
 
-const CancelButton = styled(Typography)(
-  ({ theme }) => css`
-    padding: ${theme.space['3']};
-  `,
-)
-
 const debouncer = debounce((setFunc: () => void) => setFunc(), 500)
 
 const MobileSearchInput = ({
@@ -142,8 +136,6 @@ const MobileSearchInput = ({
   SearchResultsElement: JSX.Element
   SearchInputElement: JSX.Element
 }) => {
-  const { t } = useTranslation('common')
-
   useEffect(() => {
     if (state === 'entered') {
       searchInputRef.current?.focus()
@@ -172,12 +164,7 @@ const MobileSearchInput = ({
             data-testid="search-input-backdrop"
           />
           <FloatingSearchContainer $state={state}>
-            <InputAndCancel>
-              {SearchInputElement}
-              <CancelButton as="button" onClick={() => toggle(false)}>
-                {t('action.cancel')}
-              </CancelButton>
-            </InputAndCancel>
+            <InputAndCancel>{SearchInputElement}</InputAndCancel>
             {SearchResultsElement}
           </FloatingSearchContainer>
         </Portal>
@@ -338,9 +325,7 @@ export const SearchInput = ({
   const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem | MarketplaceDomainItem
-    const listingPrice = selectedItem
-      ? (selectedItem as MarketplaceDomainItem).listing_price
-      : null
+    const listingPrice = selectedItem ? (selectedItem as MarketplaceDomainItem).listing_price : null
     const domainTerms = selectedItem ? (selectedItem as MarketplaceDomainItem).terms : null
     const expireTime = selectedItem ? (selectedItem as MarketplaceDomainItem).expire_time : null
     const premiumRegPrice = selectedItem
