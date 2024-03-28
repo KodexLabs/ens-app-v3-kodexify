@@ -77,6 +77,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
     @media only screen and (max-width: 640px) {
       display: flex;
       width: 100%;
+      height: 350px;
       position: fixed;
       z-index: 9999;
       top: 100%;
