@@ -60,7 +60,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
     top: 0;
     width: 200px;
     right: 120%;
-    height: 340px;
+    height: 300px;
     background: white;
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
@@ -71,18 +71,17 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
       width: 470px;
       top: -10px;
       left: 0;
-      transform: ${$open ? 'translateY(-340px)' : 'translateY(0)'};
+      transform: ${$open ? 'translateY(-300px)' : 'translateY(0)'};
     }
 
     @media only screen and (max-width: 640px) {
       display: flex;
       width: 100%;
-      height: 350px;
       position: fixed;
       z-index: 9999;
       top: 100%;
       left: 0;
-      transform: ${$open ? 'translateY(-350px)' : 'translateY(0)'};
+      transform: ${$open ? 'translateY(-300px)' : 'translateY(0)'};
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
     }
@@ -106,9 +105,12 @@ const FiltersOptionContainer = styled.div(
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    color: black;
+    color: gray;
+    border-color: gray;
+    transition: 100ms ease-out;
     &:hover {
-      color: #444;
+      color: black;
+      border-color: black;
     }
   `,
 )
@@ -120,14 +122,15 @@ const Checkbox = styled.div(
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid gray;
+    border: 2px solid;
+    border-color: inherit;
     border-radius: 5px;
   `,
 )
 
 const FilterTitle = styled.p(
-  () => css`
-    color: gray;
+  ({ theme }) => css`
+    color: ${theme.colors.blue};
     font-weight: 600;
     font-size: 18px;
   `,
@@ -144,7 +147,6 @@ const CheckIcon = styled.svg(
   () => css`
     width: 14px;
     height: 14px;
-    color: #717171;
   `,
 )
 
@@ -175,8 +177,7 @@ const Line = styled.div<{
 )
 
 export const SearchInputFilters = () => {
-  const { open, filters, setOpen, toggleFilterResults, toggleFilterStatus, toggleFilterType } =
-    useFilters()
+  const { open, filters, setOpen, toggleFilterStatus, toggleFilterType } = useFilters()
 
   useEffect(() => setOpen(false), [])
 
@@ -202,9 +203,6 @@ export const SearchInputFilters = () => {
                 key={option}
                 onClick={() => {
                   switch (key) {
-                    case 'results':
-                      toggleFilterResults(option)
-                      break
                     case 'status':
                       toggleFilterStatus(option)
                       break

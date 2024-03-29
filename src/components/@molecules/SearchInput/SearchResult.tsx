@@ -307,8 +307,6 @@ const NameResultItem = forwardRef<
   const zorb = useZorb(name, 'name')
   const { data: ethPrice } = useEthPrice()
   const { registrationStatus, isLoading, beautifiedName, priceData } = useBasicName(name)
-  // const kodexRegStatus =
-  //   getRegistrationStatus((domain as MarketplaceDomainItem).expire_time) || 'invalid'
 
   const expireTime = (domain as MarketplaceDomainItem).expire_time || 0
 
@@ -354,7 +352,7 @@ const NameResultItem = forwardRef<
         </AvatarWrapper>
         <TextWrapper>
           <Typography weight="bold">{beautifiedName}</Typography>
-          {((domain as MarketplaceDomainItem).terms?.length || 0) > 0 && (
+          {((domain as MarketplaceDomainItem).taxonomies?.length || 0) > 0 && (
             <CategoriesText>
               {(domain as MarketplaceDomainItem).terms?.slice(0, 2).join(', ')}
             </CategoriesText>

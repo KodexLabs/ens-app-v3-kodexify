@@ -2,10 +2,7 @@
 import { useState } from 'react'
 import { useQueryClient } from 'wagmi'
 
-import {
-  filtersDefaultState,
-  useFilters,
-} from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
+import { useFilters } from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
 import { SearchItem } from '@app/components/@molecules/SearchInput/types'
 import { buildQueryParamString } from '@app/utils/buildQueryParamString'
 import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
@@ -49,7 +46,7 @@ const useKodexSearch = () => {
   const { data: ethPrice } = useEthPrice()
   const { filters } = useFilters()
 
-  const isSearchSimilar = filters.results.includes(filtersDefaultState.results[0])
+  const isSearchSimilar = filters.type.includes('Similar')
 
   const fetchDomains = async () => {
     const paramString = buildQueryParamString({
@@ -64,7 +61,13 @@ const useKodexSearch = () => {
       max_listing_price: '',
       min_listing_price: '',
       search_terms: '',
-      name_symbols_type: filters.type.length > 0 ? filters.type.join(',').toLowerCase() : '',
+      name_symbols_type:
+        filters.type.length > 0
+          ? filters.type
+              .filter((e) => e !== 'Similar')
+              .join(',')
+              .toLowerCase()
+          : '',
       has_offers_selector: '',
       status_type:
         filters.status.length < 3
@@ -73,7 +76,6 @@ const useKodexSearch = () => {
               .filter((e) => e)[0] || ''
           : '',
     })
- 
 
     const resPlain = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
       method: 'GET',
