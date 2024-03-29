@@ -333,7 +333,7 @@
     "status": {
       "registered": "Registered",
       "gracePeriod": "Grace Period",
-      "premium": "Temporary Premium",
+      "premium": "Premium",
       "available": "Available",
       "notOwned": "Not Owned",
       "notImported": "Not Imported",
