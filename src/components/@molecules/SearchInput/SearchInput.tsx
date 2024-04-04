@@ -226,7 +226,7 @@ export const SearchInput = ({
     if (isEmpty) {
       return {
         type: 'text',
-        value: history.length > 0 ? `Recently searched ${history[0].value}` : t('search.emptyText'),
+        value: history.length > 0 ? `Recently searched` : t('search.emptyText'),
       }
     }
     if (inputIsAddress) {

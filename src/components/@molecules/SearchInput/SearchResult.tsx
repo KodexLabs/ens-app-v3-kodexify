@@ -378,7 +378,7 @@ const NameResultItem = forwardRef<
       {registrationStatus ? (
         <DomainPriceWrapper>
           <StatusTag status={registrationStatus} lastRegPrice={displayPrice} />
-          {displayPrice ? (
+          {displayPrice && registrationStatus !== 'registered' ? (
             <StyledStatusTag status={registrationStatus}>{displayPrice}</StyledStatusTag>
           ) : null}
         </DomainPriceWrapper>

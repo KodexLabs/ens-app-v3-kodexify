@@ -328,7 +328,7 @@
     "address": "Address",
     "errors": {
       "tooShort": "Name too short",
-      "invalid": "Invalid format for name"
+      "invalid": "Invalid format"
     },
     "status": {
       "registered": "Registered",
