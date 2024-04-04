@@ -364,7 +364,8 @@ export const ProfileDetails = ({
         />
         <ProfileSection
           label="categories"
-          condition={formattedCategories && formattedCategories.length > 0}
+          // condition={formattedCategories && formattedCategories.length > 0}
+          condition={false}
           array={formattedCategories!}
           button={OtherProfileButton}
         />
