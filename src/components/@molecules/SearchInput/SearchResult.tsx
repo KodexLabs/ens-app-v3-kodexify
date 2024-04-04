@@ -203,13 +203,24 @@ const PremiumTag = styled(StyledTag)(
   `,
 )
 
-const StatusTag = ({ status }: { status: RegistrationStatus }) => {
+const StatusTag = ({
+  status,
+  lastRegPrice,
+ }: {
+  status: RegistrationStatus
+  lastRegPrice?: string | null
+ }
+ ) => {
   const { t } = useTranslation('common')
   switch (status) {
     case 'owned':
     case 'imported':
-    case 'registered':
-      return <StyledTag>{t(`search.status.${status}`)}</StyledTag>
+      case 'registered':
+        return (
+          <StyledTag>
+            {t(`search.status.${status}`) + (lastRegPrice ? ` for ${lastRegPrice}` : '')}
+          </StyledTag>
+        )   
     case 'gracePeriod':
       return <GracePeriodTag>{t(`search.status.${status}`)}</GracePeriodTag>
     case 'premium':
@@ -366,7 +377,7 @@ const NameResultItem = forwardRef<
       )}
       {registrationStatus ? (
         <DomainPriceWrapper>
-          <StatusTag status={registrationStatus} />
+          <StatusTag status={registrationStatus} lastRegPrice={displayPrice} />
           {displayPrice ? (
             <StyledStatusTag status={registrationStatus}>{displayPrice}</StyledStatusTag>
           ) : null}
