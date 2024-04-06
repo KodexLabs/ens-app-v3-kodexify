@@ -48,6 +48,8 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const toggleFilterStatus = useCallback(
     (status: string) => {
       if (filter.status.includes(status)) {
+        if (filter.status.length === 1) return
+
         setFilters({
           status: filter.status.filter((item) => item !== status),
           type: filter.type,
@@ -67,6 +69,10 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const toggleFilterType = useCallback(
     (type: string) => {
       if (filter.type.includes(type)) {
+        const hasOneTypeSelected = 
+          (!filter.type.includes('Similar') && filter.type.length === 1) || filter.type.length === 2
+        if (type !== 'Similar' && hasOneTypeSelected) return
+
         setFilters({
           status: filter.status,
           type: filter.type.filter((item) => item !== type),
