@@ -139,6 +139,7 @@ const useKodexSearch = () => {
       setFetchedDomains(domains)
       return domains
     },
+    staleTime: 1200000
   })
 
   return {
