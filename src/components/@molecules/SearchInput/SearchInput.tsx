@@ -337,7 +337,7 @@ export const SearchInput = ({
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${selectedItem.value}.eth`,
+        value: `${selectedItem.value || inputVal?.replace('.eth', '')}.eth`,
         listing_price: listingPrice ?? undefined,
         expire_time: expireTime ?? undefined,
         terms: domainTerms ?? undefined,
