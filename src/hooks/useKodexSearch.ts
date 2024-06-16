@@ -53,7 +53,7 @@ const useKodexSearch = () => {
       limit: isSearchSimilar ? 3 : 6,
       offset: 0,
       search_type:
-        filters.status.length === 1 && filters.status.includes('Registered') ? 'marketplace' : '',
+        filters.status.includes('Registered') ? 'marketplace' : '',
       order_type: 'default',
       name: searchTerm.replace('.eth', ''),
       max_domain_length: '',
