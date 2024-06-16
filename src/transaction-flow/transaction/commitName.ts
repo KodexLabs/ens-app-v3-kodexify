@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 

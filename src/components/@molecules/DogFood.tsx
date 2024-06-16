@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { isAddress } from '@ethersproject/address'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -38,9 +39,9 @@ export const DogFood = (
   const { t } = useTranslation('profile')
   const { getAddr, ready } = useEns()
   const queryClient = useQueryClient()
-
+  // eslint-disable-next-line prettier/prettier
   const inputWatch: string | undefined = watch('dogfoodRaw')
-
+  
   // Throttle the change of the input
   const [ethNameInput, setEthNameInput] = useState('')
   const throttledSetEthNameInput = useDebouncedCallback(setEthNameInput, 500)

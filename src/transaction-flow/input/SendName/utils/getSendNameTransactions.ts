@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import type { useAbilities } from '@app/hooks/abilities/useAbilities'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 

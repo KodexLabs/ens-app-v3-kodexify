@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+
 /* eslint-disable default-case */
 
 /* eslint-disable no-param-reassign */
