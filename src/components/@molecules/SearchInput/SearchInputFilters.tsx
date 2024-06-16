@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components'
 
 import { CheckSVG } from '@ensdomains/thorin'
 
-import { FilterKeysType, filtersDefaultState, useFilters } from './SearchInputFIltersProvider'
+import { FilterKeysType, filtersOption, useFilters } from './SearchInputFIltersProvider'
 
 const FiltersWrapper = styled.div(
   () => css`
@@ -195,7 +195,7 @@ export const SearchInputFilters = () => {
         ))}
       </FiltersButtonContainer>
       <FiltersContainer $open={open}>
-        {Object.keys(filtersDefaultState).map((key) => (
+        {Object.keys(filtersOption).map((key) => (
           <FiltersKeyContainer>
             <FilterTitle>{key[0].toUpperCase() + key.slice(1)}</FilterTitle>
             {filtersDefaultState[key as FilterKeysType].map((option) => (

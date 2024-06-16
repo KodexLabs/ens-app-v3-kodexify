@@ -16,8 +16,13 @@ interface FilterContextProps {
   toggleFilterType: (type: string) => void
 }
 
-export const filtersDefaultState = {
+export const filtersOptions = {
   status: ['Registered', 'Available', 'Premium'],
+  type: ['Letters', 'Numbers', 'Similar'],
+}
+
+export const filtersDefaultState = {
+  status: [],
   type: ['Letters', 'Numbers', 'Similar'],
 }
 
@@ -48,8 +53,6 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
   const toggleFilterStatus = useCallback(
     (status: string) => {
       if (filter.status.includes(status)) {
-        if (filter.status.length === 1) return
-
         setFilters({
           status: filter.status.filter((item) => item !== status),
           type: filter.type,
