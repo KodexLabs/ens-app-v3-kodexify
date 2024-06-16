@@ -59,7 +59,7 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
       }
 
       setFilters({
-        status: filter.status.concat([status]),
+        status: [status],
         type: filter.type,
       })
     },
