@@ -71,18 +71,10 @@ export const FiltersProvider = ({ children }: { children: ReactNode }) => {
 
   const toggleFilterType = useCallback(
     (type: string) => {
-      if (filter.type.includes(type)) {
-        const hasOneTypeSelected = 
-          (!filter.type.includes('Similar') && filter.type.length === 1) || filter.type.length === 2
-        if (type !== 'Similar' && hasOneTypeSelected) return
-
-        setFilters({
+      if (filter.type.includes(type)) return setFilters({
           status: filter.status,
           type: filter.type.filter((item) => item !== type),
         })
-
-        return
-      }
 
       setFilters({
         status: filter.status,

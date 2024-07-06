@@ -59,7 +59,6 @@ const useKodexSearch = () => {
     })
 
     const json: any = await res.json()
-
     const allDomains = json.domains as MarketplaceDomainType[]
 
     if (!(json.domains as MarketplaceDomainType[]).map((d) => d.name_ens).includes(searchTerm))

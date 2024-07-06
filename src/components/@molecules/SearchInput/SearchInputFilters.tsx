@@ -60,7 +60,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
     top: 0;
     width: 200px;
     right: 120%;
-    height: 300px;
+    height: 330px;
     background: white;
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
