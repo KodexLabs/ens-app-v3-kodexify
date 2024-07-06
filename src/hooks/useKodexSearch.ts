@@ -46,10 +46,10 @@ const useKodexSearch = () => {
       name: searchTerm.replace('.eth', ''),
       domain_type: filters.type.join(',').toLowerCase(),
       domain_status: filters.status.join(',').toLowerCase(),
-      order_type: 'default',
+      // order_type: 'default',
     })
 
-    const res = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
+    const res = await fetch(`https://jetty.kodex.io/search/ens?${paramString}`, {
       method: 'GET',
       mode: 'cors',
       headers: {
