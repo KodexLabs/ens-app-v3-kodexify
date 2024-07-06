@@ -10,6 +10,7 @@ import { WagmiConfig } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
+import { FiltersProvider } from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
 import { Notifications } from '@app/components/Notifications'
 import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
@@ -154,10 +155,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                     <GlobalErrorProvider>
                       <SyncProvider>
                         <TransactionFlowProvider>
-                          <SyncDroppedTransaction>
-                            <Notifications />
-                            <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                          </SyncDroppedTransaction>
+                          <FiltersProvider>
+                            <SyncDroppedTransaction>
+                              <Notifications />
+                              <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                            </SyncDroppedTransaction>
+                          </FiltersProvider>
                         </TransactionFlowProvider>
                       </SyncProvider>
                     </GlobalErrorProvider>

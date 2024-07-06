@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'

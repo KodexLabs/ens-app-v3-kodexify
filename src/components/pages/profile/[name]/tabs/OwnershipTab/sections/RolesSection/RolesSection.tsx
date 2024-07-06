@@ -75,7 +75,6 @@ export const RolesSection = ({ name, roles, details }: Props) => {
                   buttonId="send-name-disabled-button"
                   buttonText={label}
                   mobileWidth={150}
-                  mobileButtonWidth="initial"
                   prefix={icon}
                   size="medium"
                 />

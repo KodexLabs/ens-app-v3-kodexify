@@ -3,23 +3,52 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { Dispatch, ForwardedRef, MouseEvent, SetStateAction, forwardRef } from 'react'
+import { ChangeEvent, ForwardedRef, MouseEvent, forwardRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
 
+import { filtersDefaultState, useFilters } from './SearchInputFIltersProvider'
+import { SearchInputFilters } from './SearchInputFilters'
+
+const SearchWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
+  ({ $size }) => css`
+    z-index: 1000;
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin: 0 auto;
+
+    @media only screen and (max-width: 720px) {
+      width: 90%;
+    }
+
+    @media only screen and (max-width: 640px) {
+      width: 100%;
+    }
+  `,
+)
+
 const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`
     z-index: 1;
+    display: flex;
+    align-items: center;
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2.5xLarge']};
     border-color: ${theme.colors.border};
-    width: 100%;
+    width: ${$size === 'extraLarge' ? '90%' : '100%'};
     & input::placeholder {
       color: ${theme.colors.greyPrimary};
       font-weight: ${theme.fontWeights.bold};
     }
+
+    @media only screen and (max-width: 640px) {
+      width: 100%;
+      border-radius: ${theme.radii.extraLarge};
+    }
+
     ${$size === 'medium' &&
     css`
       max-width: ${theme.space['96']};
@@ -90,31 +119,52 @@ export const SearchInputBox = forwardRef(
     }: {
       size?: 'medium' | 'extraLarge'
       input: string
-      setInput: Dispatch<SetStateAction<string>>
+      setInput: (input: string) => void
       containerRef: ForwardedRef<HTMLDivElement>
     },
     ref,
   ) => {
+    const [currentSearchTerm, setCurrentSearch] = useState(input)
     const { t } = useTranslation('common')
+
+    const { setFilters } = useFilters()
+
+    useEffect(() => {
+      if (size === 'medium') setFilters(filtersDefaultState)
+    }, [size, setFilters])
+
+    let delayTimer: number | NodeJS.Timeout | string
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+      clearTimeout(delayTimer)
+      setCurrentSearch(e.target.value)
+      delayTimer = setTimeout(() => {
+        setInput(e.target.value)
+      }, 1000)
+    }
+
     return (
-      <SearchInputWrapper ref={containerRef} $size={size}>
-        <Input
-          size={size}
-          label={t('search.label')}
-          hideLabel
-          placeholder={t('search.placeholder')}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          ref={ref as any}
-          clearable
-          autoComplete="off"
-          autoCorrect="off"
-          parentStyles={StyledInputParent(size)}
-          icon={size === 'medium' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
-          spellCheck="false"
-          data-testid="search-input-box"
-        />
-      </SearchInputWrapper>
+      <SearchWrapper ref={containerRef} $size={size}>
+        {size === 'extraLarge' && <SearchInputFilters />}
+        <SearchInputWrapper $size={size}>
+          <Input
+            size={size}
+            label={t('search.label')}
+            hideLabel
+            placeholder={t('search.placeholder')}
+            value={currentSearchTerm}
+            onChange={onChange}
+            ref={ref as any}
+            clearable
+            autoComplete="off"
+            autoCorrect="off"
+            parentStyles={StyledInputParent(size)}
+            icon={size === 'medium' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
+            spellCheck="false"
+            data-testid="search-input-box"
+            autoCapitalize="off"
+          />
+        </SearchInputWrapper>
+      </SearchWrapper>
     )
   },
 )

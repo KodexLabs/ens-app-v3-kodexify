@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 

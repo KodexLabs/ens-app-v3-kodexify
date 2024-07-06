@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { getAddress } from '@ethersproject/address'
 
 import { formatsByName } from '@ensdomains/address-encoder'

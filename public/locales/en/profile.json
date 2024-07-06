@@ -11,6 +11,7 @@
   "otherRecords": "Other Records",
   "editProfile": "Edit Profile",
   "ownership": "Ownership",
+  "categories": "Categories",
   "viewDetails": "View Details",
   "banner": {
     "available": {
@@ -71,7 +72,6 @@
             "grace-period": {
               "title": "Grace period ends",
               "tooltip": "A 90 day grace window after expiration, when the name can still be extended but not re-registered."
-              
             },
             "registration": {
               "title": "Registered"

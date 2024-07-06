@@ -9,6 +9,7 @@ export type HistoryItem = {
   type: 'name' | 'address'
   value: string
   lastAccessed: number
+  listing_price?: string
 }
 
 export type AnyItem = (SearchItem | HistoryItem) & {

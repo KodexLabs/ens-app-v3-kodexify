@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -67,7 +68,6 @@ const Resolver = ({
   isCachedData,
 }: {
   name: string
-  isWrapped: boolean
   canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
@@ -112,7 +112,6 @@ const Resolver = ({
                   buttonText: 'Edit',
                   mobileWidth: 150,
                   buttonWidth: '15',
-                  mobileButtonWidth: 'initial',
                   colorStyle: 'transparent',
                 }}
               />

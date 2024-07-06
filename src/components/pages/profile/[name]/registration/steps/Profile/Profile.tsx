@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+
+/* eslint-disable @typescript-eslint/naming-convention */
 import { BaseSyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'

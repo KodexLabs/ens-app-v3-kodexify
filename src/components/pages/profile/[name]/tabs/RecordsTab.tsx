@@ -281,7 +281,6 @@ export const RecordsTab = ({
                 }
                 buttonText={t('details.tabs.records.editRecords')}
                 mobileWidth={150}
-                mobileButtonWidth="initial"
                 mobilePlacement="top"
                 placement="top"
                 size="small"

@@ -60,7 +60,7 @@ export default function Page() {
               .with(P.array({ name: P.string, expiry: P._ }), (_favourites) => {
                 return (
                   <Container>
-                    {_favourites.map(({ name, expiry }: Favourite) => (
+                    {_favourites.map(({ name, expiry }) => (
                       <TaggedNameItem
                         key={name}
                         {...{ name, network: chainId, hasOtherItems: false, expiryDate: expiry }}

@@ -3,6 +3,8 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+
+/* eslint-disable @typescript-eslint/naming-convention */
 import { isAddress } from '@ethersproject/address'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -11,9 +13,13 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { useQueryClient } from 'wagmi'
 
-import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
+import { BackdropSurface, Portal, mq } from '@ensdomains/thorin'
 
 import { BatchReturn } from '@app/hooks/useBasicName'
+import useKodexSearch, {
+  MarketplaceDomainItem,
+  MarketplaceDomainType,
+} from '@app/hooks/useKodexSearch'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ValidationResult, useValidate, validate } from '@app/hooks/useValidate'
@@ -40,8 +46,9 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
 
 const SearchResultsContainer = styled.div<{
   $state: TransitionState
+  $size: 'medium' | 'extraLarge'
 }>(
-  ({ theme, $state }) => css`
+  ({ theme, $state, $size }) => css`
     position: absolute;
     width: 100%;
     height: min-content;
@@ -58,10 +65,14 @@ const SearchResultsContainer = styled.div<{
     overflow: hidden;
 
     opacity: 0;
-    z-index: 1000;
+    z-index: 100;
     transform: translateY(-${theme.space['2']});
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
       0s width linear 0s;
+
+    @media only screen and (max-width: 640px) {
+      margin-left: 0;
+    }
 
     ${$state === 'entered'
       ? css`
@@ -110,12 +121,6 @@ const InputAndCancel = styled.div(
   `,
 )
 
-const CancelButton = styled(Typography)(
-  ({ theme }) => css`
-    padding: ${theme.space['3']};
-  `,
-)
-
 const debouncer = debounce((setFunc: () => void) => setFunc(), 500)
 
 const MobileSearchInput = ({
@@ -131,8 +136,6 @@ const MobileSearchInput = ({
   SearchResultsElement: JSX.Element
   SearchInputElement: JSX.Element
 }) => {
-  const { t } = useTranslation('common')
-
   useEffect(() => {
     if (state === 'entered') {
       searchInputRef.current?.focus()
@@ -161,12 +164,7 @@ const MobileSearchInput = ({
             data-testid="search-input-backdrop"
           />
           <FloatingSearchContainer $state={state}>
-            <InputAndCancel>
-              {SearchInputElement}
-              <CancelButton as="button" onClick={() => toggle(false)}>
-                {t('action.cancel')}
-              </CancelButton>
-            </InputAndCancel>
+            <InputAndCancel>{SearchInputElement}</InputAndCancel>
             {SearchResultsElement}
           </FloatingSearchContainer>
         </Portal>
@@ -211,6 +209,7 @@ export const SearchInput = ({
   const [usingPlaceholder, setUsingPlaceholder] = useState(false)
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
+  const { fetchedDomains: kodexDomains, setSearchTerm: setKodexSearchTerm } = useKodexSearch()
 
   const isEmpty = inputVal === ''
   const inputIsAddress = useMemo(() => isAddress(inputVal), [inputVal])
@@ -227,7 +226,7 @@ export const SearchInput = ({
     if (isEmpty) {
       return {
         type: 'text',
-        value: t('search.emptyText'),
+        value: history.length > 0 ? `Recently searched` : t('search.emptyText'),
       }
     }
     if (inputIsAddress) {
@@ -257,57 +256,92 @@ export const SearchInput = ({
     }
   }, [isEmpty, inputIsAddress, isValid, isETH, is2LD, isShort, type, t])
 
-  const extraItems = useMemo(() => {
-    if (history.length > 0) {
-      let historyRef = history
-      if (normalisedOutput !== '') {
-        historyRef = history.filter(
-          (item) =>
-            item.value !== normalisedOutput &&
-            item.value.includes(normalisedOutput) &&
-            (searchItem.type === 'nameWithDotEth'
-              ? item.value !== `${normalisedOutput}.eth`
-              : true),
-        )
-      }
-      return historyRef
+  // const extraItems = useMemo(() => {
+  //   if (history.length > 0) {
+  //     let historyRef = history
+  //     if (normalisedOutput !== '') {
+  //       historyRef = history.filter(
+  //         (item) =>
+  //           item.value !== normalisedOutput &&
+  //           item.value.includes(normalisedOutput) &&
+  //           (searchItem.type === 'nameWithDotEth'
+  //             ? item.value !== `${normalisedOutput}.eth`
+  //             : true),
+  //       )
+  //     }
+  //     return historyRef
+  //       .sort((a, b) => b.lastAccessed - a.lastAccessed)
+  //       .map((item) => ({ ...item, isHistory: true }))
+  //   }
+  //   return []
+  // }, [history, normalisedOutput, searchItem.type])
+
+  const searchItems: (AnyItem | MarketplaceDomainItem)[] = useMemo(() => {
+    const _searchItem = { ...searchItem, isHistory: false }
+    // const _extraItems = extraItems
+
+    if (!normalisedOutput && searchItem.type === 'text') {
+      const historyItems = history
         .sort((a, b) => b.lastAccessed - a.lastAccessed)
         .map((item) => ({ ...item, isHistory: true }))
-    }
-    return []
-  }, [history, normalisedOutput, searchItem.type])
+        .slice(0, 5)
 
-  const searchItems: AnyItem[] = useMemo(() => {
-    const _searchItem = { ...searchItem, isHistory: false }
-    const _extraItems = extraItems
-    if (searchItem.type === 'error') {
+      return [_searchItem, ...historyItems]
+    }
+
+    if (searchItem.type === 'error' || searchItem.type === 'address') {
       return [_searchItem]
     }
-    if (searchItem.type === 'text') {
-      if (extraItems.length > 0) {
-        return [..._extraItems.slice(0, 5)]
-      }
-      return [_searchItem]
+
+    // if (searchItem.type === 'address') {
+    //   // if (extraItems.length > 0) {
+    //   //   return [..._extraItems.slice(0, 5)]
+    //   // }
+    //   return [_searchItem]
+    // }
+
+    if (searchItem.type === 'nameWithDotEth' && kodexDomains.length > 0) {
+      const kodexSearchItems =
+        kodexDomains?.map((domain: MarketplaceDomainType) => ({
+          type: 'nameWithDotEth' as 'nameWithDotEth',
+          isHistory: false,
+          value: domain.name_ens,
+          ...domain,
+        })) || []
+
+      return kodexSearchItems.slice(0, 6)
     }
-    const _searchItems: AnyItem[] =
-      _searchItem.type === 'nameWithDotEth'
-        ? [_searchItem, { type: 'name', isHistory: false }]
-        : [_searchItem]
-    return [..._searchItems, ...extraItems].slice(0, 5)
-  }, [searchItem, extraItems])
+
+    const historyItems = history
+      .sort((a, b) => b.lastAccessed - a.lastAccessed)
+      .map((item) => ({ ...item, isHistory: true }))
+
+    return [_searchItem, ...historyItems].slice(0, 5)
+  }, [searchItem, kodexDomains, history, normalisedOutput])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
   const handleFocusOut = useCallback(() => toggle(false), [toggle])
 
   const validateKey = useQueryKeys().validate
   const handleSearch = useCallback(() => {
-    let selectedItem = searchItems[selected] as SearchItem
+    let selectedItem = searchItems[selected] as SearchItem | MarketplaceDomainItem
+    const listingPrice = selectedItem ? (selectedItem as MarketplaceDomainItem).listing_price : null
+    const domainTerms = selectedItem ? (selectedItem as MarketplaceDomainItem).terms : null
+    const expireTime = selectedItem ? (selectedItem as MarketplaceDomainItem).expire_time : null
+    const premiumRegPrice = selectedItem
+      ? (selectedItem as MarketplaceDomainItem).premium_reg_price
+      : null
+
     if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {
         type: 'name',
-        value: `${normalisedOutput}.eth`,
+        value: `${selectedItem.value || inputVal?.replace('.eth', '')}.eth`,
+        listing_price: listingPrice ?? undefined,
+        expire_time: expireTime ?? undefined,
+        terms: domainTerms ?? undefined,
+        premium_reg_price: premiumRegPrice ?? undefined,
       }
     }
     if (!selectedItem.value) {
@@ -331,6 +365,7 @@ export const SearchInput = ({
       if (currentValidation.is2LD && currentValidation.isETH && currentValidation.isShort) {
         return
       }
+      // Query domain on search (SINGLE domain)
       const queryKey = queryKeys.basicName(selectedItem.value, false)
       const currentQuery = queryClient.getQueryData<any[]>(queryKey)
       if (currentQuery) {
@@ -425,20 +460,37 @@ export const SearchInput = ({
     const searchInput = searchInputRef.current
     searchInput?.addEventListener('keydown', handleKeyDown)
     searchInput?.addEventListener('focusin', handleFocusIn)
-    searchInput?.addEventListener('focusout', handleFocusOut)
+    // searchInput?.addEventListener('focusout', handleFocusOut)
     return () => {
       searchInput?.removeEventListener('keydown', handleKeyDown)
       searchInput?.removeEventListener('focusin', handleFocusIn)
-      searchInput?.removeEventListener('focusout', handleFocusOut)
+      // searchInput?.removeEventListener('focusout', handleFocusOut)
     }
   }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef])
+
+  const handleClickOutside = (e: any) => {
+    if (searchInputContainerRef.current && !searchInputContainerRef.current.contains(e.target)) {
+      toggle(false)
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInputContainerRef])
 
   const SearchInputElement = (
     <SearchInputBox
       containerRef={searchInputContainerRef}
       ref={searchInputRef}
       input={inputVal}
-      setInput={setInputVal}
+      setInput={(input: string) => {
+        setInputVal(input)
+        setKodexSearchTerm(input)
+      }}
       size={size}
     />
   )
@@ -450,6 +502,7 @@ export const SearchInput = ({
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
+      $size={size}
       data-testid="search-input-results"
       data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
@@ -463,6 +516,7 @@ export const SearchInput = ({
           usingPlaceholder={item.isHistory ? false : usingPlaceholder}
           key={`${item.type}-${item.value}`}
           value={item.value || normalisedOutput}
+          item={item}
         />
       ))}
     </SearchResultsContainer>

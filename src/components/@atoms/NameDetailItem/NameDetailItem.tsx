@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
