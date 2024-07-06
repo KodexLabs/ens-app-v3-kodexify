@@ -44,7 +44,7 @@ const useKodexSearch = () => {
   const fetchDomains = async () => {
     const paramString = buildQueryParamString({
       name: searchTerm.replace('.eth', ''),
-      daomin_type: filters.type.join(',').toLowerCase(),
+      domain_type: filters.type.join(',').toLowerCase(),
       domain_status: filters.status.join(',').toLowerCase(),
       order_type: 'default',
     })
