@@ -71,7 +71,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
       width: 470px;
       top: -10px;
       left: 0;
-      transform: ${$open ? 'translateY(-300px)' : 'translateY(0)'};
+      transform: ${$open ? 'translateY(-330px)' : 'translateY(0)'};
     }
 
     @media only screen and (max-width: 640px) {
@@ -81,7 +81,7 @@ const FiltersContainer = styled.div<{ $open: boolean }>(
       z-index: 9999;
       top: 100%;
       left: 0;
-      transform: ${$open ? 'translateY(-300px)' : 'translateY(0)'};
+      transform: ${$open ? 'translateY(-330px)' : 'translateY(0)'};
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
     }
