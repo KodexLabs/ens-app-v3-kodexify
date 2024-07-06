@@ -17,7 +17,7 @@ interface FilterContextProps {
 }
 
 export const filtersOptions = {
-  status: ['Registered', 'Available', 'Premium'],
+  status: ['Registered', 'Available', 'Premium', 'Grace'],
   type: ['Letters', 'Numbers', 'Similar'],
 }
 

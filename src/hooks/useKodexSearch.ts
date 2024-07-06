@@ -2,12 +2,12 @@
 import { useState } from 'react'
 import { useQueryClient } from 'wagmi'
 
+import { useEthPrice } from './useEthPrice'
+
 import { useFilters } from '@app/components/@molecules/SearchInput/SearchInputFIltersProvider'
-import { SearchItem } from '@app/components/@molecules/SearchInput/types'
+import type { SearchItem } from '@app/components/@molecules/SearchInput/types'
 import { buildQueryParamString } from '@app/utils/buildQueryParamString'
 import { calculateRegistrationPrice } from '@app/utils/getRegistrationPrice'
-
-import { useEthPrice } from './useEthPrice'
 
 export type MarketplaceDomainType = {
   name: string
@@ -33,11 +33,6 @@ export type MarketplaceDomainItem = MarketplaceDomainType &
     isHistory: boolean
   }
 
-const MARKETPLACE_STATUS_PARAM_OPTIONS: Record<string, string> = {
-  Available: 'previously_owned',
-  Premium: 'premium',
-}
-
 const useKodexSearch = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [fetchedDomains, setFetchedDomains] = useState<MarketplaceDomainType[]>([])
@@ -46,38 +41,14 @@ const useKodexSearch = () => {
   const { data: ethPrice } = useEthPrice()
   const { filters } = useFilters()
 
-  const isSearchSimilar = filters.type.includes('Similar')
-
   const fetchDomains = async () => {
     const paramString = buildQueryParamString({
-      limit: isSearchSimilar ? 3 : 6,
-      offset: 0,
-      search_type:
-        filters.status.length === 1 && filters.status.includes('Registered') ? 'marketplace' : '',
-      order_type: 'default',
       name: searchTerm.replace('.eth', ''),
-      max_domain_length: '',
-      min_domain_length: '',
-      max_listing_price: '',
-      min_listing_price: '',
-      search_terms: '',
-      name_symbols_type:
-        filters.type.length > 0
-          ? filters.type
-              .filter((e) => e !== 'Similar')
-              .join(',')
-              .toLowerCase()
-          : '',
-      has_offers_selector: '',
-      status_type:
-        filters.status.length < 3
-          ? filters.status
-              .map((statusValue) => MARKETPLACE_STATUS_PARAM_OPTIONS[statusValue])
-              .filter((e) => e)[0] || ''
-          : '',
+      daomin_type: filters.type.join(',').toLowerCase(),
+      domain_status: filters.status.join(',').toLowerCase()
     })
 
-    const resPlain = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
+    const res = await fetch(`https://jetty.kodex.io/ens/search/plain?${paramString}`, {
       method: 'GET',
       mode: 'cors',
       headers: {
@@ -86,24 +57,11 @@ const useKodexSearch = () => {
       },
     })
 
-    const resSimilar = await fetch(`https://jetty.kodex.io/ens/search/similar?${paramString}`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
+    const json: any = await res.json()
 
-    const jsonPlain: any = await resPlain.json()
-    const jsonSimilar: any = await resSimilar.json()
+    const allDomains = json.domains as MarketplaceDomainType[]
 
-    const allDomains = [
-      ...(jsonPlain.domains as MarketplaceDomainType[]),
-      ...(isSearchSimilar ? (jsonSimilar.domains as MarketplaceDomainType[]) : []),
-    ]
-
-    if (!(jsonPlain.domains as MarketplaceDomainType[]).map((d) => d.name_ens).includes(searchTerm))
+    if (!(json.domains as MarketplaceDomainType[]).map((d) => d.name_ens).includes(searchTerm))
       allDomains.unshift({
         expire_time: 0,
         name: `${searchTerm.replace('.eth', '')}.eth`,
